@@ -18,7 +18,7 @@ android {
         }
     }
 
-    signingConfigs{
+    signingConfigs {
         debug {
             storeFile file('../debug.keystore')
         }
@@ -27,6 +27,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    // You must install or update the Support Repository through the SDK manager to use this dependency.
     compile 'com.android.support:support-v4:19.+'
-    compile 'com.google.android.gms:play-services:+'
+    compile 'com.google.android.gms:play-services:4.2.42'
+    compile 'com.android.support:appcompat-v7:19.+'
 }
