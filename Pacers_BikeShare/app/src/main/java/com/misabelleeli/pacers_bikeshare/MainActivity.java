@@ -1,0 +1,102 @@
+package com.misabelleeli.pacers_bikeshare;
+
+import android.app.ActionBar;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
+
+
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener{
+
+    public ActionBar actionBar;
+    public ViewPager viewPager;
+    public TabsPagerAdapter mAdapter;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        actionBar=getActionBar();
+        viewPager.setAdapter(mAdapter);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        ActionBar.Tab stationTab = actionBar.newTab();
+        stationTab.setText("Station");
+        stationTab.setTabListener(this);
+
+        ActionBar.Tab mapTab = actionBar.newTab();
+        mapTab.setText("Map");
+        mapTab.setTabListener(this);
+
+        ActionBar.Tab timerTab = actionBar.newTab();
+        timerTab.setText("Timer");
+        timerTab.setTabListener(this);
+
+        ActionBar.Tab aboutTab = actionBar.newTab();
+        aboutTab.setText("About");
+        aboutTab.setTabListener(this);
+
+        actionBar.addTab(mapTab);
+        actionBar.addTab(stationTab);
+        actionBar.addTab(timerTab);
+        actionBar.addTab(aboutTab);
+
+        // on swiping the viewpager make respective tab selected
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+                // on changing the page
+                // make respected tab selected
+                actionBar.setSelectedNavigationItem(position);
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction fragmentTransaction) {
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction fragmentTransaction) {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction fragmentTransaction) {
+
+    }
+}
