@@ -2,50 +2,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.misabelleeli.pacers_bikeshare.TimerFragment">
+    tools:context="com.misabelleeli.pacers_bikeshare.TimerFragment"
+    android:keepScreenOn="true">
 
-    <!-- TODO: Update blank fragment layout -->
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_centerHorizontal="true"
-        android:weightSum="1">
+    <TextView
+        android:text="@string/timerVal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="75sp"
+        android:id="@+id/timerValue"
+        android:layout_marginTop="68dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/textView2"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.18" />
 
-        <Chronometer
-            android:layout_width="108dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/chronometer"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.18"
-            android:textSize="150px" />
+    <Button
+        android:id="@+id/startbutton"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:text="@string/startLabel"
+        android:layout_below="@+id/timerValue"
+        android:layout_toLeftOf="@+id/pause" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/textView"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.18" />
+    <Button
+        android:id="@+id/pause"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:text="@string/PauseLabel"
+        android:layout_alignTop="@+id/startbutton"
+        android:layout_centerHorizontal="true" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.18" />
+    <Button
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:text="@string/resetLabel"
+        android:id="@+id/reset"
+        android:layout_alignTop="@+id/pause"
+        android:layout_toRightOf="@+id/pause" />
 
-    </LinearLayout>
 </RelativeLayout>
