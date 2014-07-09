@@ -81,16 +81,14 @@ public class GoogleMapFragment extends SupportMapFragment {
         /*Once there is a database access implement the following:
             1. If docks are full, have marker color change.
             2. If dock is about to be full, have another maker color change.
-            3. Add a better infobox.
+            3. Create Custom InfoBox.
         */
         for(int i = 0; i < title.length;i++)
         {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(latitudes[i], longtitudes[i]))
-                    .title(title[i]))
-                    .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
-                    //.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher))
+                    .title(title[i]));
         }
         mMap.setMyLocationEnabled(true);
     }
