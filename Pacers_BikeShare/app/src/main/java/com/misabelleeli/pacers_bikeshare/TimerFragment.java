@@ -66,13 +66,10 @@ public class TimerFragment extends Fragment {
             }
         };
 
-        getView().findViewById(R.id.startbutton).setOnClickListener(handler);
-
-
-        /*
-
         timerValue = (TextView) getView().findViewById(R.id.timerValue);
         startButton = (Button) getView().findViewById(R.id.startbutton);
+        startButton.setOnClickListener(handler);
+/*
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,7 +77,7 @@ public class TimerFragment extends Fragment {
                 customHandler.postDelayed(updateTimerThread,0);
             }
         });
-
+*/
         pauseButton = (Button) getView().findViewById(R.id.pause);
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,51 +98,12 @@ public class TimerFragment extends Fragment {
                 timerValue.setText("00:00:00");
             }
         });
-
-
-        // notification
-        Notification notification = new Notification(R.drawable.notification_icon, title, System.currentTimeMillis());
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-        // parameters
-        String ringtone = prefs.getString(context.getString(R.string.key_notifications_ringtone), "");
-        if (ringtone.length() > 0) {
-            notification.sound = Uri.parse(ringtone);
-            notification.audioStreamType = AudioManager.STREAM_NOTIFICATION;
-        }
-
-        boolean useVibrator = prefs.getBoolean(context.getString(R.string.key_notifications_use_vibrator), false);
-        if (useVibrator) {
-            notification.defaults |= Notification.DEFAULT_VIBRATE;
-        }
-
-        boolean useLed = prefs.getBoolean(context.getString(R.string.key_notifications_use_led), false);
-        if (useLed) {
-            notification.defaults |= Notification.DEFAULT_LIGHTS;
-            notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-            notification.ledARGB = 0xff00ff00;
-            notification.ledOnMS = 300;
-            notification.ledOffMS=1000;
-        }
-
-        // alert
-        RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
-        contentView.setImageViewResource(R.id.notification_icon, R.drawable.icon);
-        contentView.setTextViewText(R.id.notification_title, title);
-        contentView.setTextViewText(R.id.notification_text, text);
-        notification.contentView = contentView;
-
-        Intent notificationIntent = new Intent(context, MainActivity.class);
-
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-        notification.contentIntent = contentIntent;
-
-        notificationManager.notify(1, notification);
-
-        */
     }
 
     private void showNotification(){
+        startTime = SystemClock.uptimeMillis();
+        customHandler.postDelayed(updateTimerThread,0);
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 getActivity()).setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("Rescue Me ALARM")
