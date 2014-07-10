@@ -156,7 +156,7 @@ public class TimerFragment extends Fragment {
                 .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         mBuilder.setSound(alarmSound);
         mBuilder.setOngoing(true);
-
+        mBuilder.setAutoCancel(true);
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(getActivity(), MainActivity.class);
 
