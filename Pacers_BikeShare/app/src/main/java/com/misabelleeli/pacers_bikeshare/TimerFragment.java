@@ -2,15 +2,25 @@ package com.misabelleeli.pacers_bikeshare;
 
 
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
 
@@ -47,6 +57,20 @@ public class TimerFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //listener handler
+        View.OnClickListener handler = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showNotification();
+            }
+        };
+
+        getView().findViewById(R.id.startbutton).setOnClickListener(handler);
+
+
+        /*
+
         timerValue = (TextView) getView().findViewById(R.id.timerValue);
         startButton = (Button) getView().findViewById(R.id.startbutton);
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +102,90 @@ public class TimerFragment extends Fragment {
             }
         });
 
+
+        // notification
+        Notification notification = new Notification(R.drawable.notification_icon, title, System.currentTimeMillis());
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        // parameters
+        String ringtone = prefs.getString(context.getString(R.string.key_notifications_ringtone), "");
+        if (ringtone.length() > 0) {
+            notification.sound = Uri.parse(ringtone);
+            notification.audioStreamType = AudioManager.STREAM_NOTIFICATION;
+        }
+
+        boolean useVibrator = prefs.getBoolean(context.getString(R.string.key_notifications_use_vibrator), false);
+        if (useVibrator) {
+            notification.defaults |= Notification.DEFAULT_VIBRATE;
+        }
+
+        boolean useLed = prefs.getBoolean(context.getString(R.string.key_notifications_use_led), false);
+        if (useLed) {
+            notification.defaults |= Notification.DEFAULT_LIGHTS;
+            notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+            notification.ledARGB = 0xff00ff00;
+            notification.ledOnMS = 300;
+            notification.ledOffMS=1000;
+        }
+
+        // alert
+        RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
+        contentView.setImageViewResource(R.id.notification_icon, R.drawable.icon);
+        contentView.setTextViewText(R.id.notification_title, title);
+        contentView.setTextViewText(R.id.notification_text, text);
+        notification.contentView = contentView;
+
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        notification.contentIntent = contentIntent;
+
+        notificationManager.notify(1, notification);
+
+        */
+    }
+
+    private void showNotification(){
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                getActivity()).setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle("Rescue Me ALARM")
+                .setContentText("Press here to cancel the SOS SMS");
+
+        // Make the notification play the default notification sound:
+        Uri alarmSound = RingtoneManager
+                .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        mBuilder.setSound(alarmSound);
+        mBuilder.setOngoing(true);
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(getActivity(), MainActivity.class);
+
+        // This somehow makes sure, there is only 1 CountDownTimer going if the notification is pressed:
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        // The stack builder object will contain an artificial back stack for the started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getActivity());
+
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+
+        // Make this unique ID to make sure there is not generated just a brand new intent with new extra values:
+        int requestID = (int) System.currentTimeMillis();
+
+        // Pass the unique ID to the resultPendingIntent:
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity(), requestID, resultIntent, 0);
+
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager = (NotificationManager) getActivity()
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(0, mBuilder.build());
     }
 
     private Runnable updateTimerThread = new Runnable(){
@@ -91,7 +199,7 @@ public class TimerFragment extends Fragment {
             secs = secs % 60;
             int milliseconds = (int) (updatedTime%1000);
             timerValue.setText(""+mins+":"+String.format("%02d",secs)+":"
-                    + String.format("%03d",milliseconds));
+                    + String.format("%02d",milliseconds));
 
             if(secs == 20)
             {
