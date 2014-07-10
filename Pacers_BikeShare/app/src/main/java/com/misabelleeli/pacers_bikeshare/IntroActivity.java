@@ -17,9 +17,11 @@ public class IntroActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Full page logo screen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_intro);
 
+        // Delay for 1 sec
         handler = new Handler();
         handler.postDelayed(irun, 1000);
     }
@@ -30,6 +32,7 @@ public class IntroActivity extends Activity {
             startActivity(i);
             finish();
 
+            // Screen fade in & out effect
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     };
