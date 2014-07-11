@@ -36,6 +36,7 @@ public class TimerFragment extends Fragment {
     private long delimiter = 28;
     final CounterClass timer = new CounterClass(startTime,1000);
     private NotificationCompat.Builder mBuilder;
+    private NotificationManager nManager;
 
     public TimerFragment() {
         // Required empty public constructor
@@ -83,6 +84,35 @@ public class TimerFragment extends Fragment {
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
         mBuilder.setContentTitle("Pacers Bike Share Timer");
 
+
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(getActivity(), MainActivity.class);
+
+        // This somehow makes sure, there is only 1 CountDownTimer going if the notification is pressed:
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        // The stack builder object will contain an artificial back stack for the started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getActivity());
+
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+
+        // Make this unique ID to make sure there is not generated just a brand new intent with new extra values:
+        int requestID = (int) System.currentTimeMillis();
+
+        // Pass the unique ID to the resultPendingIntent:
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity(), requestID, resultIntent, 0);
+
+        mBuilder.setContentIntent(resultPendingIntent);
+        nManager = (NotificationManager) getActivity()
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+
     }
 
 
@@ -105,7 +135,11 @@ public class TimerFragment extends Fragment {
                     TimeUnit.MILLISECONDS.toSeconds(millisec) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
             timerValue.setText(hms);
-            if(delimiter == temp || 0 == temp)
+            mBuilder.setContentText("Time: " + hms);
+            // mId allows you to update the notification later on.
+            nManager.notify(0, mBuilder.build());
+
+            if(delimiter == temp || 1 == temp)
             {
                 // Make the notification play the default notification sound:
                 Uri alarmSound = RingtoneManager
@@ -113,38 +147,6 @@ public class TimerFragment extends Fragment {
                 mBuilder.setSound(alarmSound);
                 mBuilder.setOngoing(true);
                 mBuilder.setAutoCancel(true);
-                // Creates an explicit intent for an Activity in your app
-                Intent resultIntent = new Intent(getActivity(), MainActivity.class);
-
-                // This somehow makes sure, there is only 1 CountDownTimer going if the notification is pressed:
-                resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                // The stack builder object will contain an artificial back stack for the started Activity.
-                // This ensures that navigating backward from the Activity leads out of
-                // your application to the Home screen.
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(getActivity());
-
-                // Adds the back stack for the Intent (but not the Intent itself)
-                stackBuilder.addParentStack(MainActivity.class);
-
-                // Adds the Intent that starts the Activity to the top of the stack
-                stackBuilder.addNextIntent(resultIntent);
-
-                // Make this unique ID to make sure there is not generated just a brand new intent with new extra values:
-                int requestID = (int) System.currentTimeMillis();
-
-                // Pass the unique ID to the resultPendingIntent:
-                PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity(), requestID, resultIntent, 0);
-
-                mBuilder.setContentIntent(resultPendingIntent);
-                NotificationManager mNotificationManager = (NotificationManager) getActivity()
-                        .getSystemService(Context.NOTIFICATION_SERVICE);
-
-                // mId allows you to update the notification later on.
-                mNotificationManager.notify(0, mBuilder.build());
-                mBuilder.setContentText("There is " + temp + " minute left!");
-                //Cancel Timer
-                timer.cancel();
             }
         }
 
