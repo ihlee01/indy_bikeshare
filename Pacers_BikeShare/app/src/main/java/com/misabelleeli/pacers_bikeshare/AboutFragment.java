@@ -4,10 +4,11 @@ package com.misabelleeli.pacers_bikeshare;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.TextView;
 
 
 /**
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
  *
  */
 public class AboutFragment extends Fragment {
+
 
 
     public AboutFragment() {
@@ -29,5 +31,11 @@ public class AboutFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_about, container, false);
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+    }
 
 }

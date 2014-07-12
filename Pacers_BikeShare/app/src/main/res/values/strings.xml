@@ -9,4 +9,10 @@
     <string name="PauseLabel">Pause</string>
     <string name="timerVal"> 00:30:00</string>
     <string name="resetLabel">Reset</string>
+    <string name="about">
+
+
+
+
+    </string>
 </resources>
