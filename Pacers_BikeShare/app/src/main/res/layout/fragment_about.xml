@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/about_title"
                 android:padding="5dp"
-                android:
+
                 android:text="About"/>
 
         </LinearLayout>
