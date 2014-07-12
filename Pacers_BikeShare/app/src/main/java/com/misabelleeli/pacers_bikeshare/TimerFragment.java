@@ -11,6 +11,7 @@ import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class TimerFragment extends Fragment {
     final CounterClass timer = new CounterClass(startTime,1000);
     private NotificationCompat.Builder mBuilder;
     private NotificationManager nManager;
+    private boolean vibrateSignal = true;
 
     public TimerFragment() {
         // Required empty public constructor
@@ -70,7 +72,12 @@ public class TimerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 timer.cancel();
-                timerValue.setText("00:00:00");
+                delimiter = 28;
+                hms = "00:30:00";
+                mBuilder.setOngoing(false);
+                timerValue.setText(hms);
+                mBuilder.setContentText(hms);
+                mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
             }
         });
     }
@@ -78,11 +85,25 @@ public class TimerFragment extends Fragment {
     private void showNotification(){
         timer.start();
 
+        String action_snooze = "com.misabelleeli.pacers_bikeshare.ACTION_SNOOZE";
+        String action_dimiss = "com.misabelleeli.pacers_bikeshare.ACTION_DISMISS";
         mBuilder = new NotificationCompat.Builder(
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
-        mBuilder.setContentTitle("Pacers Bike Share Timer");
+        mBuilder.setContentTitle("Pacers Bike Share Timer")
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
+        mBuilder.setAutoCancel(true);
+
+        Intent snoozeIntent = new Intent(getActivity(), MainActivity.class);
+        snoozeIntent.setAction(action_snooze);
+        PendingIntent snoozePIntent = PendingIntent.getService(getActivity(),0,snoozeIntent,0);
+
+        Intent dismissIntent = new Intent(getActivity(), MainActivity.class);
+        dismissIntent.setAction(action_dimiss);
+        PendingIntent dismissPIntent = PendingIntent.getService(getActivity(),0,dismissIntent,0);
 
 
+        mBuilder.addAction(R.drawable.ic_launcher, "Snooze", snoozePIntent)
+                .addAction(R.drawable.ic_launcher, "Dismiss", dismissPIntent);
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(getActivity(), MainActivity.class);
@@ -111,6 +132,16 @@ public class TimerFragment extends Fragment {
         nManager = (NotificationManager) getActivity()
                 .getSystemService(Context.NOTIFICATION_SERVICE);
 
+        if(dismissIntent.getAction().equals(action_dimiss))
+        {
+            mBuilder.setOngoing(false);
+        }
+
+        if(snoozeIntent.equals(action_snooze))
+        {
+            delimiter = delimiter - 1;
+        }
+
     }
 
 
@@ -134,23 +165,28 @@ public class TimerFragment extends Fragment {
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
             timerValue.setText(hms);
             mBuilder.setContentText("Time: " + hms);
+            mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
             // mId allows you to update the notification later on.
             nManager.notify(0, mBuilder.build());
+            String t = String.format("%02d",delimiter);
 
-            if(delimiter == temp || 1 == temp)
+            if(delimiter == temp)
             {
+
                 // Make the notification play the default notification sound:
                 Uri alarmSound = RingtoneManager
                         .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 mBuilder.setSound(alarmSound);
                 mBuilder.setOngoing(true);
-                mBuilder.setAutoCancel(true);
+            }
+            else
+            {
+                mBuilder.setOngoing(false);
             }
         }
 
         @Override
         public void onFinish() {
-            timerValue.setText("00:00:00");
         }
     }
 }
