@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -103,7 +104,7 @@ public class TimerFragment extends Fragment {
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
         mBuilder.setContentTitle("Pacers Bike Share Timer")
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
-        mBuilder.setAutoCancel(true).setWhen(0);
+        mBuilder.setAutoCancel(true).setPriority(0);
 
         Intent snoozeIntent = new Intent(getActivity(), MainActivity.class);
         snoozeIntent.setAction(action_snooze);
@@ -142,9 +143,13 @@ public class TimerFragment extends Fragment {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         nManager.notify(0,mBuilder.getNotification());
 
-        /*
+        /** Instantiating the DialogFragment */
+        AlertClass alert = new AlertClass();
+
+
         if(dismissIntent.getAction().equals(action_dimiss))
         {
+            alert.getShowsDialog();
             mBuilder.setOngoing(false);
             mBuilder.setVibrate(new long[]{0});
             nManager.cancelAll();
@@ -154,7 +159,7 @@ public class TimerFragment extends Fragment {
             mBuilder.setOngoing(false);
             nManager.cancel(requestID);
         }
-        */
+
 
     }
 
