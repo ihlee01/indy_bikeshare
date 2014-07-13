@@ -2,14 +2,22 @@ package com.misabelleeli.pacers_bikeshare;
 
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdate;
@@ -22,6 +30,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +40,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class GoogleMapFragment extends SupportMapFragment {
 
     private GoogleMap mMap;
+    private double currentLat;
+    private double currentLong;
+
     private LayoutInflater Minflater;
     private double []latitudes = {39.76737,39.77224,39.77643,39.77475,39.77418,39.76885,
             39.78179,39.77964,39.77564,39.76595,39.76702,39.76720,39.76832,
@@ -98,6 +111,16 @@ public class GoogleMapFragment extends SupportMapFragment {
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
         }
         mMap.setMyLocationEnabled(true);
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                String url = "http://maps.google.com/maps?daddr="+currentLat+","+currentLong;
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -124,16 +147,13 @@ public class GoogleMapFragment extends SupportMapFragment {
             // Getting reference to the TextView to set longitude
             TextView description = (TextView) v.findViewById(R.id.snippet);
 
+            currentLat = latLng.latitude;
+            currentLong = latLng.longitude;
 
-            title.setText("Latitude:" + latLng.latitude + " Longitude:"+ latLng.longitude);
-/*
-            String url = "http://maps.google.com/maps?saddr="+latLng.latitude+","+latLng.longitude+"&daddr="+targetLat+","+targetLang;
-            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
-            intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-            startActivity(intent);
+            title.setText("Latitude:" + latLng.latitude + "\nLongitude:"+ latLng.longitude);
 
-            description.setText();
-*/
+            description.setText("Click for Directions.");
+
             // Returning the view containing InfoWindow contents
             return v;
 
