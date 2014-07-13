@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,11 +34,10 @@ public class TimerFragment extends Fragment {
     private long startTime = 1800000; //milliseconds
     private String hms = "";
     private long delimiter = 28;
-    final CounterClass timer = new CounterClass(startTime,1000);
+    private CounterClass timer = new CounterClass(startTime,1000);
     private NotificationCompat.Builder mBuilder;
     private NotificationManager nManager;
-    private boolean vibrateSignal = true;
-
+    private int requestID = 0;
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -75,9 +75,8 @@ public class TimerFragment extends Fragment {
                 delimiter = 28;
                 hms = "00:30:00";
                 mBuilder.setOngoing(false);
+                nManager.cancelAll();
                 timerValue.setText(hms);
-                mBuilder.setContentText(hms);
-                mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
             }
         });
     }
@@ -91,7 +90,7 @@ public class TimerFragment extends Fragment {
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
         mBuilder.setContentTitle("Pacers Bike Share Timer")
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
-        mBuilder.setAutoCancel(true);
+        mBuilder.setAutoCancel(true).setWhen(0);
 
         Intent snoozeIntent = new Intent(getActivity(), MainActivity.class);
         snoozeIntent.setAction(action_snooze);
@@ -123,7 +122,7 @@ public class TimerFragment extends Fragment {
         stackBuilder.addNextIntent(resultIntent);
 
         // Make this unique ID to make sure there is not generated just a brand new intent with new extra values:
-        int requestID = (int) System.currentTimeMillis();
+        requestID = (int) System.currentTimeMillis();
 
         // Pass the unique ID to the resultPendingIntent:
         PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity(), requestID, resultIntent, 0);
@@ -135,11 +134,13 @@ public class TimerFragment extends Fragment {
         if(dismissIntent.getAction().equals(action_dimiss))
         {
             mBuilder.setOngoing(false);
+            mBuilder.setVibrate(new long[]{0});
+            nManager.cancelAll();
         }
-
-        if(snoozeIntent.equals(action_snooze))
+        else if(snoozeIntent.equals(action_snooze))
         {
-            delimiter = delimiter - 1;
+            mBuilder.setOngoing(false);
+            nManager.cancel(requestID);
         }
 
     }
@@ -174,14 +175,18 @@ public class TimerFragment extends Fragment {
             {
 
                 // Make the notification play the default notification sound:
+                /*
                 Uri alarmSound = RingtoneManager
                         .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 mBuilder.setSound(alarmSound);
+                */
+                mBuilder.setVibrate(new long[]{500,500,500});
                 mBuilder.setOngoing(true);
+
             }
-            else
+            else if(delimiter > temp)
             {
-                mBuilder.setOngoing(false);
+                mBuilder.setVibrate(new long[]{0});
             }
         }
 
