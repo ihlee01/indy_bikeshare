@@ -97,13 +97,6 @@ public class GoogleMapFragment extends SupportMapFragment {
                     .title(title[i]));
         }
         mMap.setMyLocationEnabled(true);
-
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                return false;
-            }
-        });
     }
 
 
