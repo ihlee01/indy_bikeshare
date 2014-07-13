@@ -143,13 +143,11 @@ public class TimerFragment extends Fragment {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         nManager.notify(0,mBuilder.getNotification());
 
-        /** Instantiating the DialogFragment */
-        AlertClass alert = new AlertClass();
+
 
 
         if(dismissIntent.getAction().equals(action_dimiss))
         {
-            alert.getShowsDialog();
             mBuilder.setOngoing(false);
             mBuilder.setVibrate(new long[]{0});
             nManager.cancelAll();
