@@ -237,6 +237,7 @@
                 android:layout_height="wrap_content"
                 style="@style/Subheading2"
                 android:layout_marginTop="5dp"
+                android:textColor="#FFA100"
                 android:text="How does the Pacers Bikeshare Bike cable-lock work?"/>
 
             <ImageView
@@ -262,6 +263,7 @@
                 android:layout_height="wrap_content"
                 style="@style/Subheading2"
                 android:layout_marginTop="5dp"
+                android:textColor="#FFA100"
                 android:text="@string/question1"/>
 
             <TextView
@@ -281,6 +283,7 @@
                 android:layout_height="wrap_content"
                 style="@style/Subheading2"
                 android:layout_marginTop="5dp"
+                android:textColor="#FFA100"
                 android:text="@string/question2"/>
 
             <TextView
@@ -300,6 +303,7 @@
                 android:layout_height="wrap_content"
                 style="@style/Subheading2"
                 android:layout_marginTop="5dp"
+                android:textColor="#FFA100"
                 android:text="@string/question3"/>
 
             <TextView
@@ -319,6 +323,7 @@
                 android:layout_height="wrap_content"
                 style="@style/Subheading2"
                 android:layout_marginTop="5dp"
+                android:textColor="#FFA100"
                 android:text="@string/question4"/>
 
             <TextView
@@ -338,6 +343,7 @@
                 android:layout_height="wrap_content"
                 style="@style/Subheading2"
                 android:layout_marginTop="5dp"
+                android:textColor="#FFA100"
                 android:text="@string/question5"/>
 
             <TextView
@@ -357,6 +363,7 @@
                 android:layout_height="wrap_content"
                 style="@style/Subheading2"
                 android:layout_marginTop="5dp"
+                android:textColor="#FFA100"
                 android:text="@string/question6"/>
 
             <TextView
