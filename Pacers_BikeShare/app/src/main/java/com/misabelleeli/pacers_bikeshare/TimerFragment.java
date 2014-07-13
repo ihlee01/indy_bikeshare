@@ -62,7 +62,7 @@ public class TimerFragment extends Fragment {
         View.OnClickListener handler = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showNotification();
+                timer.start();
             }
         };
 
@@ -92,13 +92,14 @@ public class TimerFragment extends Fragment {
                 mBuilder.setVibrate(new long[]{0});
             }
         });
+
+        showNotification();
     }
 
     private void showNotification(){
-        timer.start();
 
         String action_snooze = "com.misabelleeli.pacers_bikeshare.ACTION_SNOOZE";
-        String action_dimiss = "com.misabelleeli.pacers_bikeshare.ACTION_DISMISS";
+        String action_dismiss = "com.misabelleeli.pacers_bikeshare.ACTION_DISMISS";
 
         mBuilder = new NotificationCompat.Builder(
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
@@ -111,7 +112,7 @@ public class TimerFragment extends Fragment {
         PendingIntent snoozePIntent = PendingIntent.getService(getActivity(),0,snoozeIntent,0);
 
         Intent dismissIntent = new Intent(getActivity(), MainActivity.class);
-        dismissIntent.setAction(action_dimiss);
+        dismissIntent.setAction(action_dismiss);
         PendingIntent dismissPIntent = PendingIntent.getService(getActivity(),0,dismissIntent,0);
 
 
@@ -143,15 +144,23 @@ public class TimerFragment extends Fragment {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         nManager.notify(0,mBuilder.getNotification());
 
-        if(dismissIntent.getAction().equals(action_dimiss))
+        /*
+        Log.d("DismissIntent", dismissIntent.getAction());
+        Log.d("SnoozeIntent",snoozeIntent.getAction());
+        Log.d("SnoozeIntent",action_snooze);
+        */
+        if(dismissIntent.getAction().equals(action_dismiss))
         {
-            mBuilder.setOngoing(false);
+            Log.d("test","inside2");
+            mBuilder.setOngoing(true);
             mBuilder.setVibrate(new long[]{0});
             nManager.cancelAll();
         }
-        else if(snoozeIntent.equals(action_snooze))
+
+        if(snoozeIntent.equals(action_snooze))
         {
-            mBuilder.setOngoing(false);
+            Log.d("test","inside1");
+            mBuilder.setOngoing(true);
             nManager.cancel(requestID);
         }
 
@@ -181,7 +190,8 @@ public class TimerFragment extends Fragment {
             mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
             // mId allows you to update the notification later on.
             nManager.notify(0, mBuilder.build());
-            String t = String.format("%02d",delimiter);
+
+
 
             if(delimiter == temp)
             {
