@@ -78,7 +78,7 @@ public class TimerFragment extends Fragment {
                 timer.cancel();
                 delimiter = 28;
                 hms = "00:30:00";
-                mBuilder.setOngoing(false);
+                mBuilder.setOngoing(true);
                 nManager.cancelAll();
                 timerValue.setText(hms);
             }
@@ -107,6 +107,7 @@ public class TimerFragment extends Fragment {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
         mBuilder.setAutoCancel(true).setPriority(2);
 
+        /*
         Intent snoozeIntent = new Intent(getActivity(), MainActivity.class);
         snoozeIntent.setAction(action_snooze);
         PendingIntent snoozePIntent = PendingIntent.getService(getActivity(),0,snoozeIntent,0);
@@ -118,7 +119,7 @@ public class TimerFragment extends Fragment {
 
         mBuilder.addAction(R.drawable.ic_launcher, "Snooze", snoozePIntent)
                 .addAction(R.drawable.ic_launcher, "Dismiss", dismissPIntent);
-
+        */
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(getActivity(), MainActivity.class);
 
@@ -148,7 +149,7 @@ public class TimerFragment extends Fragment {
         Log.d("DismissIntent", dismissIntent.getAction());
         Log.d("SnoozeIntent",snoozeIntent.getAction());
         Log.d("SnoozeIntent",action_snooze);
-        */
+
         if(dismissIntent.getAction().equals(action_dismiss))
         {
             Log.d("test","inside2");
@@ -163,7 +164,7 @@ public class TimerFragment extends Fragment {
             mBuilder.setOngoing(true);
             nManager.cancel(requestID);
         }
-
+        */
 
     }
 
