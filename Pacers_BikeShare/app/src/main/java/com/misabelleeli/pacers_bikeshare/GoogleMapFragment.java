@@ -2,6 +2,8 @@ package com.misabelleeli.pacers_bikeshare;
 
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -122,12 +124,16 @@ public class GoogleMapFragment extends SupportMapFragment {
             // Getting reference to the TextView to set longitude
             TextView description = (TextView) v.findViewById(R.id.snippet);
 
-            // Setting the latitude
-            title.setText("Latitude:" + latLng.latitude);
 
-            // Setting the longitude
-            description.setText("Longitude:"+ latLng.longitude + "\n Test");
+            title.setText("Latitude:" + latLng.latitude + " Longitude:"+ latLng.longitude);
+/*
+            String url = "http://maps.google.com/maps?saddr="+latLng.latitude+","+latLng.longitude+"&daddr="+targetLat+","+targetLang;
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+            intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+            startActivity(intent);
 
+            description.setText();
+*/
             // Returning the view containing InfoWindow contents
             return v;
 
