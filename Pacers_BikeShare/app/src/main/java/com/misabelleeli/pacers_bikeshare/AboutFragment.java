@@ -34,6 +34,18 @@ public class AboutFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        TextView checkout_content = (TextView)getView().findViewById(R.id.checkout_content);
+        TextView checkout_content2 = (TextView)getView().findViewById(R.id.checkout_content2);
+        TextView checkout_content3 = (TextView)getView().findViewById(R.id.checkout_content3);
+        TextView return_content = (TextView)getView().findViewById(R.id.return_content);
+        TextView return_content2 = (TextView)getView().findViewById(R.id.return_content2);
+
+        checkout_content.setText(Html.fromHtml(getResources().getString(R.string.checkout_content)));
+        checkout_content2.setText(Html.fromHtml(getResources().getString(R.string.checkout_content2)));
+        checkout_content3.setText(Html.fromHtml(getResources().getString(R.string.checkout_content3)));
+        return_content.setText(Html.fromHtml(getResources().getString(R.string.return_content)));
+        return_content2.setText(Html.fromHtml(getResources().getString(R.string.return_content2)));
+
 
 
     }

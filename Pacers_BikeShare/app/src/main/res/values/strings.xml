@@ -9,10 +9,46 @@
     <string name="PauseLabel">Pause</string>
     <string name="timerVal"> 00:30:00</string>
     <string name="resetLabel">Reset</string>
-    <string name="about">
-
-
-
-
+    <string name="about">About</string>
+    <string name="about_content">Indiana Pacers Bikeshare is a program of Indianapolis Cultural Trail, Inc. (ICT, Inc.) Thanks to the generous gift of the Herb Simon Family Foundation, Indy\'s public bicycle-sharing system is named after our very own Indiana Pacers basketball team.</string>
+    <string name="about_content2">Bikeshare is designed to encourage you to use a Pacers Bikeshare bike for all your short trips. Once you\’ve paid your modest 24-Hour Pass or Annual Membership fee, you can take an unlimited number of 30 minute rides for the duration of your Pass or Membership. Enjoy the gold standard of bikeshare programs!</string>
+    <string name="how">How It Works</string>
+    <string name="how_content">Indy\'s 250 gold bikes are available when you need them near your favorite spots, your office or neighborhood. Once you are done with your ride, simply dock your bike at any of the available stations.</string>
+    <string name="checkout_content">
+        <![CDATA[
+        <b>1.</b> Press the kiosk button.<br/>
+        <b>2.</b> Follow the instructions on the touchscreen to purchase a 24-Hour Pass.<br/>
+        <b>3.</b> When prompted, enter the dock number of the bike you wish to check out.<br/>
+        <b>4.</b> The kiosk will unlock the bike from the dock you chose. The dock holding the bike will beep until the bike is removed.
+        ]]>
+    </string>
+    <string name="checkout_content2">
+        <![CDATA[
+        <b>1.</b> Choose one of the locked Pacers Bikeshare bikes.<br/>
+        <b>2.</b> Press the silver button on the bike’s dock. <br/>
+        <b>3.</b> Touch your Membership card to the square behind the silver button.<br/>
+        <b>4.</b> Remove the bike once the locks open (dock will start beeping after the bike is unlocked).
+        ]]>
+    </string>
+    <string name="checkout_content3">
+        <![CDATA[
+        <b>1.</b> Press the kiosk button.<br/>
+        <b>2.</b> Follow the prompts on the touchscreen. When prompted, swipe the same credit card registered with your membership.<br/>
+        <b>3.</b> When prompted, enter the dock number of the bike you wish to check out.<br/>
+        <b>4.</b> The kiosk will unlock the bike from the dock you chose. The dock holding the bike will beep until the bike is removed.
+        ]]>
+    </string>
+    <string name="ride_content">You now have access to a Pacers Bikeshare bike for unlimited 30-minute trips for the duration of your Pass or Membership.\n\nThe 24-Hour Pass or Annual Membership includes the first 30-minutes of your ride for no additional charge.\n\nAdjust the seat, strap on your helmet and go! Enjoy riding your Pacers Bikeshare bike, and then check it back in at any station with an available dock when you are finished. </string>
+    <string name="return_content">
+        <![CDATA[
+        <b>1.</b> Return your bike to any Pacers Bikeshare station by rolling it into an available dock.<br/>
+        <b>2.</b> Wait for three rapid blinks of the green light and three quick beeps.<br/>
+        <b>3.</b> Once you\'ve returned your Pacers Bikeshare bike at the station, feel free to check out another bike at any time throughout your Pass or Membership period using the same credit card or swipe your Membership card.
+        ]]>
+    </string>
+    <string name="return_content2">
+        <![CDATA[
+        Your Pass or Membership includes <font color=\"red\">unlimited</font> check-outs!
+        ]]>
     </string>
 </resources>
