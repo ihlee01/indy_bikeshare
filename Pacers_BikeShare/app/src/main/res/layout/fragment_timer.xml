@@ -23,8 +23,8 @@
         android:layout_height="45dp"
         android:text="@string/startLabel"
         android:layout_below="@+id/timerValue"
-        android:layout_alignLeft="@+id/timerValue"
-        android:layout_alignStart="@+id/timerValue" />
+        android:layout_toLeftOf="@+id/vibrate_btn"
+        android:layout_toStartOf="@+id/vibrate_btn" />
 
     <Button
         android:layout_width="90dp"
@@ -34,5 +34,14 @@
         android:layout_below="@+id/timerValue"
         android:layout_alignRight="@+id/timerValue"
         android:layout_alignEnd="@+id/timerValue" />
+
+    <Button
+        android:layout_width="90dp"
+        android:layout_height="55dp"
+        android:text="Vibrate Off"
+        android:id="@+id/vibrate_btn"
+        android:layout_below="@+id/timerValue"
+        android:layout_toLeftOf="@+id/reset"
+        android:layout_toStartOf="@+id/reset"/>
 
 </RelativeLayout>

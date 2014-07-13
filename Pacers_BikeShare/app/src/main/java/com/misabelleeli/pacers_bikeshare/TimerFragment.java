@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,14 +30,16 @@ public class TimerFragment extends Fragment {
 
     private Button startButton;
     private Button resetButton;
+    private Button vibrateOff;
+
     private TextView timerValue;
     private long startTime = 1800000; //milliseconds
     private String hms = "";
     private long delimiter = 28;
-    final CounterClass timer = new CounterClass(startTime,1000);
+    private CounterClass timer = new CounterClass(startTime,1000);
     private NotificationCompat.Builder mBuilder;
     private NotificationManager nManager;
-    private boolean vibrateSignal = true;
+    private int requestID = 001;
 
     public TimerFragment() {
         // Required empty public constructor
@@ -75,9 +78,17 @@ public class TimerFragment extends Fragment {
                 delimiter = 28;
                 hms = "00:30:00";
                 mBuilder.setOngoing(false);
+                nManager.cancelAll();
                 timerValue.setText(hms);
-                mBuilder.setContentText(hms);
-                mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
+            }
+        });
+
+        vibrateOff = (Button) getView().findViewById(R.id.vibrate_btn);
+        vibrateOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                delimiter = 0;
+                mBuilder.setVibrate(new long[]{0});
             }
         });
     }
@@ -87,11 +98,12 @@ public class TimerFragment extends Fragment {
 
         String action_snooze = "com.misabelleeli.pacers_bikeshare.ACTION_SNOOZE";
         String action_dimiss = "com.misabelleeli.pacers_bikeshare.ACTION_DISMISS";
+
         mBuilder = new NotificationCompat.Builder(
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
         mBuilder.setContentTitle("Pacers Bike Share Timer")
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
-        mBuilder.setAutoCancel(true);
+        mBuilder.setAutoCancel(true).setWhen(0);
 
         Intent snoozeIntent = new Intent(getActivity(), MainActivity.class);
         snoozeIntent.setAction(action_snooze);
@@ -122,28 +134,29 @@ public class TimerFragment extends Fragment {
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
 
-        // Make this unique ID to make sure there is not generated just a brand new intent with new extra values:
-        int requestID = (int) System.currentTimeMillis();
-
         // Pass the unique ID to the resultPendingIntent:
         PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity(), requestID, resultIntent, 0);
 
         mBuilder.setContentIntent(resultPendingIntent);
         nManager = (NotificationManager) getActivity()
                 .getSystemService(Context.NOTIFICATION_SERVICE);
+        nManager.notify(0,mBuilder.getNotification());
 
+        /*
         if(dismissIntent.getAction().equals(action_dimiss))
         {
             mBuilder.setOngoing(false);
+            mBuilder.setVibrate(new long[]{0});
+            nManager.cancelAll();
         }
-
-        if(snoozeIntent.equals(action_snooze))
+        else if(snoozeIntent.equals(action_snooze))
         {
-            delimiter = delimiter - 1;
+            mBuilder.setOngoing(false);
+            nManager.cancel(requestID);
         }
+        */
 
     }
-
 
     public class CounterClass extends CountDownTimer {
 
@@ -174,14 +187,14 @@ public class TimerFragment extends Fragment {
             {
 
                 // Make the notification play the default notification sound:
+                /*
                 Uri alarmSound = RingtoneManager
                         .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 mBuilder.setSound(alarmSound);
+                */
+                mBuilder.setVibrate(new long[]{500,500,500});
                 mBuilder.setOngoing(true);
-            }
-            else
-            {
-                mBuilder.setOngoing(false);
+
             }
         }
 
