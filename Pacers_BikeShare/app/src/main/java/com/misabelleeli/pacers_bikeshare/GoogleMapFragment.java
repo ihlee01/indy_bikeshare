@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdate;
@@ -16,6 +17,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -26,6 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class GoogleMapFragment extends SupportMapFragment {
 
     private GoogleMap mMap;
+    private LayoutInflater Minflater;
 
     public GoogleMapFragment() {
         // Required empty public constructor
@@ -36,6 +39,7 @@ public class GoogleMapFragment extends SupportMapFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Minflater = inflater;
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -83,6 +87,8 @@ public class GoogleMapFragment extends SupportMapFragment {
             2. If dock is about to be full, have another maker color change.
             3. Create Custom InfoBox.
         */
+
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
         for(int i = 0; i < title.length;i++)
         {
             mMap.addMarker(new MarkerOptions()
@@ -92,4 +98,38 @@ public class GoogleMapFragment extends SupportMapFragment {
         }
         mMap.setMyLocationEnabled(true);
     }
+
+    private class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return null;
+        }
+
+        //Custom WindowInfo
+        @Override
+        public View getInfoContents(Marker marker) {
+            // Getting view from the layout file info_window_layout
+            View v = Minflater.inflate(R.layout.custom_infowindow, null);
+
+            // Getting the position from the marker
+            LatLng latLng = marker.getPosition();
+
+            // Getting reference to the TextView to set latitude
+            TextView tvLat = (TextView) v.findViewById(R.id.title);
+
+            // Getting reference to the TextView to set longitude
+            TextView tvLng = (TextView) v.findViewById(R.id.snippet);
+
+            // Setting the latitude
+            tvLat.setText("Latitude:" + latLng.latitude);
+
+            // Setting the longitude
+            tvLng.setText("Longitude:"+ latLng.longitude + "\n Test");
+
+            // Returning the view containing InfoWindow contents
+            return v;
+
+        }
+    }
+
 }
