@@ -5,10 +5,13 @@ package com.misabelleeli.pacers_bikeshare;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.LinkedHashMap;
 
 
 /**
@@ -39,12 +42,15 @@ public class AboutFragment extends Fragment {
         TextView checkout_content3 = (TextView)getView().findViewById(R.id.checkout_content3);
         TextView return_content = (TextView)getView().findViewById(R.id.return_content);
         TextView return_content2 = (TextView)getView().findViewById(R.id.return_content2);
+        TextView map_link = (TextView)getView().findViewById(R.id.map_link);
 
         checkout_content.setText(Html.fromHtml(getResources().getString(R.string.checkout_content)));
         checkout_content2.setText(Html.fromHtml(getResources().getString(R.string.checkout_content2)));
         checkout_content3.setText(Html.fromHtml(getResources().getString(R.string.checkout_content3)));
         return_content.setText(Html.fromHtml(getResources().getString(R.string.return_content)));
         return_content2.setText(Html.fromHtml(getResources().getString(R.string.return_content2)));
+        map_link.setText(Html.fromHtml(getResources().getString(R.string.map_link)));
+        map_link.setMovementMethod(LinkMovementMethod.getInstance());
 
 
 

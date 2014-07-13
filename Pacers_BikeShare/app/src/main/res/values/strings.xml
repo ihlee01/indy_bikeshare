@@ -48,7 +48,24 @@
     </string>
     <string name="return_content2">
         <![CDATA[
-        Your Pass or Membership includes <font color=\"red\">unlimited</font> check-outs!
+        Your Pass or Membership includes <font color=\"red\">unlimited</font> check-outs!<br/>
         ]]>
     </string>
+    <string name="map_link">
+        <![CDATA[
+        <a href=\"http://ftpcontent.worldnow.com/wthr/PDF/bikesharemap.pdf\">Download Station Location Map</a>
+        ]]>
+    </string>
+    <string name="question1">Is it legal to ride a bike without a helmet?</string>
+    <string name="answer1">Adults may legally ride a bike without a helmet in most places in the United States, but Indianapolis Cultural Trail, Inc. strongly recommends wearing a helmet whenever riding a Pacers Bikeshare bike.</string>
+    <string name="question2">Does Pacers Bikeshare provide helmets for riders?</string>
+    <string name="answer2">No. There are hygiene and safety issues with shared helmet use. It is the responsibility of the rider to supply his or her own helmet. Helmets are available for purchase or rental at the following places:\n\nWheel Fun Rentals in White River State Park\n(317) 767-5072\n(317) 730-2290\n\nBicycle Garage Indy Downtown (242 E. Market St., Ste. 101)\n(317) 612-3099</string>
+    <string name="question3">Can I check out a bike immediately after returning a bike?</string>
+    <string name="answer3">Once a Pacers Bikeshare Bike is returned to a station, you may immediately check out another bike during operating hours and within your membership period.</string>
+    <string name="question4">When is the Pacers Bikeshare system available?</string>
+    <string name="answer4">The Pacers Bikeshare system is open daily from 5:30 AM until midnight. During closure periods it will not be possible to check out a bike, but bikes can be returned at any time, even when the system is closed. Please remember usage fees are still incurred for any checkout longer than 30-minutes.</string>
+    <string name="question5">What if I have a flat tire?</string>
+    <string name="answer5">Please return a bike with a flat tire to the nearest Pacers Bikeshare station and report to Customer Service with the 4-digit number on the left side of the frame near the pedals. If it is not possible to get the bike to a station, you must properly secure the bike with the built-in lock and contact Customer Service at (317) 653-1947.</string>
+    <string name="question6">What if I am involved in an accident?</string>
+    <string name="answer6">If there has been an injury, please call 911 first. Contact Customer Service at (317) 653-1947 at the earliest appropriate time. If you are qualified to administer first aid and there is a need, please help out to the limit of your abilities. If appropriate, contact the police, as well. As in any accident, exchange information with any other affected party and collect contact information from witnesses.</string>
 </resources>

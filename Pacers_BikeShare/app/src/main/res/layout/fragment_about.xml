@@ -16,6 +16,14 @@
             android:orientation="vertical"
             android:paddingBottom="10dp"
             >
+
+            <!-- Station Map -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                style="@style/Heading"
+                android:text="Station Map"/>
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -27,7 +35,20 @@
                 android:scaleType="fitStart"
                 android:adjustViewBounds="true"
                 />
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/map_link"
+                style="@style/Content"
+                android:gravity="center"
+                android:layout_marginBottom="10dp"
+                />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="#ccc"/>
             <!-- Pricing -->
             <TextView
                 android:layout_width="match_parent"
@@ -40,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/pricing"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginBottom="20dp"
@@ -48,7 +69,12 @@
                 android:adjustViewBounds="true"
                 />
 
-
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="#ccc"/>
             <!-- How it works -->
             <TextView
                 android:layout_width="match_parent"
@@ -191,8 +217,154 @@
                 android:id="@+id/return_content2"
                 android:gravity="center"
                 />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="#ccc"/>
+            <!-- FAQ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:id="@+id/faq_title"
+                style="@style/Heading"
+                android:text="FAQ"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Subheading2"
+                android:layout_marginTop="5dp"
+                android:text="How does the Pacers Bikeshare Bike cable-lock work?"/>
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/bikelock"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginBottom="10dp"
+                android:scaleType="fitStart"
+                android:adjustViewBounds="true"
+                />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="#ccc"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Subheading2"
+                android:layout_marginTop="5dp"
+                android:text="@string/question1"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/answer1"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="#ccc"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Subheading2"
+                android:layout_marginTop="5dp"
+                android:text="@string/question2"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/answer2"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="#ccc"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Subheading2"
+                android:layout_marginTop="5dp"
+                android:text="@string/question3"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/answer3"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="#ccc"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Subheading2"
+                android:layout_marginTop="5dp"
+                android:text="@string/question4"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/answer4"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="#ccc"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Subheading2"
+                android:layout_marginTop="5dp"
+                android:text="@string/question5"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/answer5"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="#ccc"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Subheading2"
+                android:layout_marginTop="5dp"
+                android:text="@string/question6"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/answer6"/>
 
         </LinearLayout>
     </ScrollView>
