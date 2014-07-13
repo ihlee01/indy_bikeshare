@@ -51,4 +51,7 @@
         Your Pass or Membership includes <font color=\"red\">unlimited</font> check-outs!
         ]]>
     </string>
+    <string name="str_driving_btn"> Driving </string>
+    <string name="str_biking_btn"> Bike </string>
+    <string name="str_walking_btn"> Walking </string>
 </resources>
