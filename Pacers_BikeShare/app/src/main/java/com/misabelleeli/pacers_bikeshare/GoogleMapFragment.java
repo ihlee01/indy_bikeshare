@@ -115,6 +115,7 @@ public class GoogleMapFragment extends SupportMapFragment {
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
+                //This will redirect it to GoogleMaps
                 String url = "http://maps.google.com/maps?daddr="+currentLat+","+currentLong;
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
                 intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");

@@ -104,7 +104,7 @@ public class TimerFragment extends Fragment {
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
         mBuilder.setContentTitle("Pacers Bike Share Timer")
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
-        mBuilder.setAutoCancel(true).setPriority(0);
+        mBuilder.setAutoCancel(true).setPriority(2);
 
         Intent snoozeIntent = new Intent(getActivity(), MainActivity.class);
         snoozeIntent.setAction(action_snooze);
@@ -142,9 +142,6 @@ public class TimerFragment extends Fragment {
         nManager = (NotificationManager) getActivity()
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         nManager.notify(0,mBuilder.getNotification());
-
-
-
 
         if(dismissIntent.getAction().equals(action_dimiss))
         {
