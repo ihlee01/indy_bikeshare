@@ -2,43 +2,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
+    android:background="#eee"
     tools:context="com.misabelleeli.pacers_bikeshare.StationFragment">
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="20dp"
-                android:textColor="#4F4F4F"
-                android:text="Stations" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="20dp"
-                android:textStyle="bold"
-                android:textColor="#4F4F4F"
-                android:text="Near your current location: "/>
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp">
+            android:textSize="20sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="20dp"
+            android:textColor="#4F4F4F"
+            android:text="Stations" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:textStyle="bold"
+            android:textColor="#4F4F4F"
+            android:text="Near your current location: "/>
+        <ListView
+            android:id="@+id/stationsListview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="15dp">
 
-                </ListView>
+        </ListView>
 
 
-        </LinearLayout>
-    </ScrollView>
-
+    </LinearLayout>
 </FrameLayout>
