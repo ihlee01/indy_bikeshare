@@ -14,14 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,11 +34,14 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  *
  */
-public class StationFragment extends Fragment {
+public class StationFragment extends Fragment implements CompoundButton.OnCheckedChangeListener{
     private List<Station> stations = new ArrayList<Station>();
+    private List<Station> favorites = new ArrayList<Station>();
     private Map<String, Station> stationMap = new HashMap<String, Station>();
     private ArrayList<String> searchList = new ArrayList<String>();
     private ArrayAdapter<Station> adapter;
+    private ListView myListView;
+    private TextView defaultBackgroundView;
     public StationFragment() {
         // Required empty public constructor
     }
@@ -51,8 +55,12 @@ public class StationFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_station, container, false);
 
+        ToggleButton favoriteToggle = (ToggleButton) rootView.findViewById(R.id.favoriteToggle);
+        favoriteToggle.setOnCheckedChangeListener(this);
 
-        final ListView myListView = (ListView) rootView.findViewById(R.id.stationsListview);
+        defaultBackgroundView = (TextView) rootView.findViewById(R.id.defaultBackgroundView);
+
+        myListView = (ListView) rootView.findViewById(R.id.stationsListview);
 
         final AutoCompleteTextView searchView = (AutoCompleteTextView) rootView.findViewById(R.id.search_view);
         AutoCompleteAdapter autoAdapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, android.R.id.text1, searchList);
@@ -87,7 +95,6 @@ public class StationFragment extends Fragment {
                         //Search Match
                         List<Station> result_array = new ArrayList<Station>();
                         result_array.add(stationMap.get(input));
-                        Log.w("",stationMap.get(input).getAddress());
                         adapter = new MyListAdapter(result_array);
                         myListView.setAdapter(adapter);
                         return true;
@@ -98,6 +105,7 @@ public class StationFragment extends Fragment {
                     }
                     else {
                         Toast.makeText(getActivity(), "No Search Result", Toast.LENGTH_SHORT).show();
+                        defaultBackgroundView.setVisibility(View.VISIBLE);
                         myListView.setAdapter(null);
                     }
                     handled = true;
@@ -106,6 +114,8 @@ public class StationFragment extends Fragment {
                 return handled;
             }
         });
+
+
 
         generateList(myListView);
 
@@ -124,17 +134,36 @@ public class StationFragment extends Fragment {
         stations.add(new Station("City market", 17, 5, 25));
         stations.add(new Station("Convention Center", 5, 9, 26));
         stations.add(new Station("Fountain Square", 10, 13, 30));
+        stations.add(new Station("525 N. Capitol Ave", 6, 1, 35));
+        stations.add(new Station("401 University Blvd", 12, 4, 37));
+        stations.add(new Station("Indiana Government Center", 4, 5, 40));
+        stations.add(new Station("680 Massachusetts Ave", 9, 1, 70));
         for(int i = 0; i < stations.size(); i++) {
             searchList.add(stations.get(i).getAddress());
             stationMap.put(stations.get(i).getAddress(), stations.get(i));
         }
     }
     private void generateList(ListView view) {
+        defaultBackgroundView.setVisibility(View.GONE);
         adapter = new MyListAdapter(stations);
         view.setAdapter(adapter);
     }
 
-
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        if(b) {
+            if(favorites.size() == 0) {
+                defaultBackgroundView.setVisibility(View.VISIBLE);
+                myListView.setAdapter(null);
+                return;
+            }
+            adapter = new MyListAdapter(favorites);
+            myListView.setAdapter(adapter);
+        }
+        else {
+            generateList(myListView);
+        }
+    }
 
 
     private class MyListAdapter extends ArrayAdapter<Station> {
@@ -190,16 +219,17 @@ public class StationFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     int position = (Integer) favorite_button.getTag();
-                    Station curStation = stations.get(position);
+                    Station curStation = list.get(position);
                     if (curStation.getFavorite()) {
                         curStation.setFavorite(false);
                         favorite_button.setBackgroundResource(R.drawable.unfavorite);
-
+                        favorites.remove(curStation);
 
 
                     } else {
                         curStation.setFavorite(true);
                         favorite_button.setBackgroundResource(R.drawable.favorite);
+                        favorites.add(curStation);
                     }
 
                 }

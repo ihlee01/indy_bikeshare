@@ -18,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
@@ -30,18 +32,18 @@ import java.util.concurrent.TimeUnit;
 public class TimerFragment extends Fragment {
 
     private Button startButton;
-    private Button resetButton;
-    private Button vibrateOff;
+    private Button stopButton;
+    private ImageButton resetButton;
 
     private TextView timerValue;
     private long startTime = 1800000; //milliseconds
     private String hms = "";
-    private long delimiter = 28;
+    private long delimiter = 10;
     private CounterClass timer = new CounterClass(startTime,1000);
     private NotificationCompat.Builder mBuilder;
     private NotificationManager nManager;
     private int requestID = 001;
-
+    private boolean hasStopped = false;
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -57,33 +59,72 @@ public class TimerFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        RelativeLayout timerLayout = (RelativeLayout) getView().findViewById(R.id.timerLayout);
 
         //listener handler
-        View.OnClickListener handler = new View.OnClickListener() {
+        View.OnClickListener start_handler = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*
+                if Timer has never been started
+                {
+                    timer.start();
+                }
+                else {
+                    Resume here
+                }*/
+                if(hasStopped) {
+                    String time = timerValue.getText().toString();
+                    String min = time.substring(0, time.indexOf(':'));
+                    String sec = time.substring(time.indexOf(':')+1);
+                    Integer min_milli = Integer.parseInt(min) * 60 * 1000;
+                    Integer sec_milli = Integer.parseInt(sec) * 1000;
+
+                    timer = new CounterClass((min_milli+sec_milli),1000);
+                }
+                hasStopped = false;
                 timer.start();
+                startButton.setVisibility(View.GONE);
+                stopButton.setVisibility(View.VISIBLE);
             }
         };
 
-        timerValue = (TextView) getView().findViewById(R.id.timerValue);
-        startButton = (Button) getView().findViewById(R.id.startbutton);
-        startButton.setOnClickListener(handler);
-
-
-        resetButton = (Button) getView().findViewById(R.id.reset);
-        resetButton.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener stop_handler = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 timer.cancel();
+                stopButton.setVisibility(View.GONE);
+                startButton.setVisibility(View.VISIBLE);
+                hasStopped = true;
+            }
+        };
+
+
+
+        timerValue = (TextView) getView().findViewById(R.id.timerValue);
+        startButton = (Button) getView().findViewById(R.id.startbutton);
+        startButton.setOnClickListener(start_handler);
+
+        stopButton = (Button) getView().findViewById(R.id.stopbutton);
+        stopButton.setOnClickListener(stop_handler);
+
+        resetButton = (ImageButton) getView().findViewById(R.id.reset);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopButton.setVisibility(View.GONE);
+                startButton.setVisibility(View.VISIBLE);
+                timer.cancel();
+                hasStopped = false;
+                timer = new CounterClass(startTime, 1000);
                 delimiter = 28;
-                hms = "00:30:00";
+                hms = "30:00";
                 mBuilder.setOngoing(true);
                 nManager.cancelAll();
                 timerValue.setText(hms);
             }
         });
-
+/*
         vibrateOff = (Button) getView().findViewById(R.id.vibrate_btn);
         vibrateOff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +133,7 @@ public class TimerFragment extends Fragment {
                 mBuilder.setVibrate(new long[]{0});
             }
         });
-
+*/
         showNotification();
     }
 
@@ -177,11 +218,26 @@ public class TimerFragment extends Fragment {
 
         @Override
         public void onTick(long l) {
+            /*
             long millisec = l;
             long temp = TimeUnit.MILLISECONDS.toMinutes(millisec) -
                     TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec));
             hms = String.format("%02d:%02d:%02d",
                     TimeUnit.MILLISECONDS.toHours(millisec),
+                    TimeUnit.MILLISECONDS.toMinutes(millisec) -
+                            TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec)),
+                    TimeUnit.MILLISECONDS.toSeconds(millisec) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
+            timerValue.setText(hms);
+            mBuilder.setContentText("Time: " + hms);
+            mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
+            // mId allows you to update the notification later on.
+            nManager.notify(0, mBuilder.build());*/
+
+            long millisec = l;
+            long temp = TimeUnit.MILLISECONDS.toMinutes(millisec) -
+                    TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec));
+            hms = String.format("%02d:%02d",
                     TimeUnit.MILLISECONDS.toMinutes(millisec) -
                             TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec)),
                     TimeUnit.MILLISECONDS.toSeconds(millisec) -
