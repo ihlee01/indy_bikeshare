@@ -3,7 +3,7 @@ package com.misabelleeli.pacers_bikeshare;
 /**
  * Created by Lee on 2014-07-14.
  */
-public class Station {
+public class Station implements Comparable<Station> {
     private String address;
     private int bikes;
     private int docks;
@@ -60,4 +60,10 @@ public class Station {
         return favorite;
     }
 
+    @Override
+    public int compareTo(Station station) {
+        int dist = Math.round(((Station) station).getDistance());
+
+        return Math.round(this.distance) - dist;
+    }
 }

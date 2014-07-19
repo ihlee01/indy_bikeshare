@@ -25,7 +25,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         ActionBar.Tab stationTab = actionBar.newTab();
-        stationTab.setText("Station");
+        stationTab.setText("Stations");
         stationTab.setTabListener(this);
 
         ActionBar.Tab mapTab = actionBar.newTab();
@@ -70,6 +70,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.findItem(R.id.action_settings).setVisible(false);
         return true;
     }
 

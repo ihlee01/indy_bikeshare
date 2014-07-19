@@ -25,6 +25,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +54,11 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         // Inflate the layout for this fragment
         if(stations.size() == 0)
             populateStations();
+
+
+        //Ascending order by distance.
+        Collections.sort(stations);
+
 
         View rootView = inflater.inflate(R.layout.fragment_station, container, false);
 
@@ -95,6 +102,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                         //Search Match
                         List<Station> result_array = new ArrayList<Station>();
                         result_array.add(stationMap.get(input));
+                        //sort by distance
+                        Collections.sort(result_array);
                         adapter = new MyListAdapter(result_array);
                         myListView.setAdapter(adapter);
                         return true;
@@ -133,11 +142,11 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         stations.add(new Station("City County Building", 6, 8, 23));
         stations.add(new Station("City market", 17, 5, 25));
         stations.add(new Station("Convention Center", 5, 9, 26));
+        stations.add(new Station("680 Massachusetts Ave", 9, 1, 70));
         stations.add(new Station("Fountain Square", 10, 13, 30));
         stations.add(new Station("525 N. Capitol Ave", 6, 1, 35));
         stations.add(new Station("401 University Blvd", 12, 4, 37));
         stations.add(new Station("Indiana Government Center", 4, 5, 40));
-        stations.add(new Station("680 Massachusetts Ave", 9, 1, 70));
         for(int i = 0; i < stations.size(); i++) {
             searchList.add(stations.get(i).getAddress());
             stationMap.put(stations.get(i).getAddress(), stations.get(i));
@@ -157,6 +166,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 myListView.setAdapter(null);
                 return;
             }
+            //sort by distance
+            Collections.sort(favorites);
             adapter = new MyListAdapter(favorites);
             myListView.setAdapter(adapter);
         }
