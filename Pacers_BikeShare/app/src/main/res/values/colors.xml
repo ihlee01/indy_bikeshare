@@ -4,4 +4,5 @@
     <color name="grey">#8C8C8C</color>
     <color name="start_green">#7AB800</color>
     <color name="stop_red">#E05206</color>
+    <color name="resume_yellow">#EAAB00</color>
 </resources>

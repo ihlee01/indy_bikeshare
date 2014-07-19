@@ -95,6 +95,8 @@ public class TimerFragment extends Fragment {
                 timer.cancel();
                 stopButton.setVisibility(View.GONE);
                 startButton.setVisibility(View.VISIBLE);
+                startButton.setText("RESUME");
+                startButton.setBackgroundColor(getResources().getColor(R.color.resume_yellow));
                 hasStopped = true;
             }
         };
@@ -102,11 +104,27 @@ public class TimerFragment extends Fragment {
 
 
         timerValue = (TextView) getView().findViewById(R.id.timerValue);
+
         startButton = (Button) getView().findViewById(R.id.startbutton);
         startButton.setOnClickListener(start_handler);
 
         stopButton = (Button) getView().findViewById(R.id.stopbutton);
         stopButton.setOnClickListener(stop_handler);
+
+
+
+        //TODO
+        /*
+        Find a way to prevent timer from refresh value to 30:00 whenever the user comes back from the other tabs.
+        ESPECIALLY, when the user comes back from MAP.
+        This causes start button to show up while the countdown is still on.
+         */
+
+
+
+
+
+
 
         resetButton = (ImageButton) getView().findViewById(R.id.reset);
         resetButton.setOnClickListener(new View.OnClickListener() {
@@ -114,13 +132,17 @@ public class TimerFragment extends Fragment {
             public void onClick(View view) {
                 stopButton.setVisibility(View.GONE);
                 startButton.setVisibility(View.VISIBLE);
+                if(startButton.getText().toString().equals("RESUME")) {
+                    startButton.setText("START");
+                    startButton.setBackgroundColor(getResources().getColor(R.color.start_green));
+                }
                 timer.cancel();
                 hasStopped = false;
                 timer = new CounterClass(startTime, 1000);
                 delimiter = 28;
                 hms = "30:00";
-                mBuilder.setOngoing(true);
-                nManager.cancelAll();
+//              mBuilder.setOngoing(true);
+//              nManager.cancelAll();
                 timerValue.setText(hms);
             }
         });
@@ -134,7 +156,9 @@ public class TimerFragment extends Fragment {
             }
         });
 */
-        showNotification();
+
+        //Disable notification for now
+        //showNotification();
     }
 
     private void showNotification(){
@@ -233,7 +257,8 @@ public class TimerFragment extends Fragment {
             mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
             // mId allows you to update the notification later on.
             nManager.notify(0, mBuilder.build());*/
-
+            startButton.setVisibility(View.GONE);
+            stopButton.setVisibility(View.VISIBLE);
             long millisec = l;
             long temp = TimeUnit.MILLISECONDS.toMinutes(millisec) -
                     TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec));
@@ -243,10 +268,12 @@ public class TimerFragment extends Fragment {
                     TimeUnit.MILLISECONDS.toSeconds(millisec) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
             timerValue.setText(hms);
-            mBuilder.setContentText("Time: " + hms);
-            mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
+
+/*
+                mBuilder.setContentText("Time: " + hms);
+                mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
             // mId allows you to update the notification later on.
-            nManager.notify(0, mBuilder.build());
+          nManager.notify(0, mBuilder.build());
 
 
 
@@ -258,11 +285,12 @@ public class TimerFragment extends Fragment {
                 Uri alarmSound = RingtoneManager
                         .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 mBuilder.setSound(alarmSound);
-                */
+
                 mBuilder.setVibrate(new long[]{500,500,500});
                 mBuilder.setOngoing(true);
 
             }
+*/
         }
 
         @Override

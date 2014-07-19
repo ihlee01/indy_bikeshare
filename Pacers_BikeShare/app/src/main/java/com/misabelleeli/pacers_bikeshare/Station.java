@@ -62,8 +62,8 @@ public class Station implements Comparable<Station> {
 
     @Override
     public int compareTo(Station station) {
+        //Ascending order by distance
         int dist = Math.round(((Station) station).getDistance());
-
         return Math.round(this.distance) - dist;
     }
 }
