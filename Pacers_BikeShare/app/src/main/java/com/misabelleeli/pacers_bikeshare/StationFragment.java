@@ -306,7 +306,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 FilterResults results = new FilterResults();
                 charSequence = charSequence.toString().toLowerCase();
                 if(charSequence == null || charSequence.length() == 0) {
-                    Log.e("", "HERE");
                     results.values = original_list;
                     results.count = original_list.size();
                 }
