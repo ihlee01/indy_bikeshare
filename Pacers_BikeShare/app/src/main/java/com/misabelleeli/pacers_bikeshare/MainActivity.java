@@ -1,11 +1,15 @@
 package com.misabelleeli.pacers_bikeshare;
 
 import android.app.ActionBar;
+import android.app.Service;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener{
@@ -89,15 +93,29 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction fragmentTransaction) {
         viewPager.setCurrentItem(tab.getPosition());
+        View focus = getCurrentFocus();
+        if (focus != null) {
+            hiddenKeyboard(focus);
+        }
     }
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction fragmentTransaction) {
-
+        View focus = getCurrentFocus();
+        if (focus != null) {
+            hiddenKeyboard(focus);
+        }
     }
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction fragmentTransaction) {
-
+        View focus = getCurrentFocus();
+        if (focus != null) {
+            hiddenKeyboard(focus);
+        }
+    }
+    private void hiddenKeyboard(View v) {
+        InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 }

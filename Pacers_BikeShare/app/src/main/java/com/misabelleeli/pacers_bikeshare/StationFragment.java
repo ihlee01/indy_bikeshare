@@ -6,7 +6,9 @@ import android.app.Service;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -17,6 +19,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -29,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -44,6 +50,9 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     private ArrayAdapter<Station> adapter;
     private ListView myListView;
     private TextView defaultBackgroundView;
+
+    EditText searchView;
+
     public StationFragment() {
         // Required empty public constructor
     }
@@ -55,10 +64,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         if(stations.size() == 0)
             populateStations();
 
-
         //Ascending order by distance.
         Collections.sort(stations);
-
 
         View rootView = inflater.inflate(R.layout.fragment_station, container, false);
 
@@ -69,8 +76,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
 
         myListView = (ListView) rootView.findViewById(R.id.stationsListview);
 
-        final AutoCompleteTextView searchView = (AutoCompleteTextView) rootView.findViewById(R.id.search_view);
-        AutoCompleteAdapter autoAdapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, android.R.id.text1, searchList);
+
+        /*AutoCompleteAdapter autoAdapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, android.R.id.text1, searchList);
         searchView.setAdapter(autoAdapter);
 
         //When user clear the search box -> Refresh listview
@@ -123,10 +130,28 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 return handled;
             }
         });
-
+        */
 
 
         generateList(myListView);
+
+        searchView = (EditText) rootView.findViewById(R.id.search_view);
+        searchView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                adapter.getFilter().filter(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
 
         return rootView;
     }
@@ -154,8 +179,9 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     }
     private void generateList(ListView view) {
         defaultBackgroundView.setVisibility(View.GONE);
-        adapter = new MyListAdapter(stations);
+        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view, stations);
         view.setAdapter(adapter);
+        view.setTextFilterEnabled(true);
     }
 
     @Override
@@ -168,7 +194,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             }
             //sort by distance
             Collections.sort(favorites);
-            adapter = new MyListAdapter(favorites);
+            adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view, favorites);
             myListView.setAdapter(adapter);
         }
         else {
@@ -177,12 +203,28 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     }
 
 
-    private class MyListAdapter extends ArrayAdapter<Station> {
+    private class MyListAdapter extends ArrayAdapter<Station> implements Filterable {
         List<Station> list;
-        public MyListAdapter(List<Station> list) {
-            super(getActivity(), R.layout.station_view, list);
+        List<Station> original_list;
+        private StationFilter filter;
+        public MyListAdapter(Context context, int resourceId, List<Station> list) {
+            super(context, resourceId, list);
             this.list = list;
+            this.original_list = new ArrayList<Station>(list);
         }
+
+        @Override
+        public Filter getFilter() {
+            if (filter == null) {
+                filter = new StationFilter();
+            }
+            return filter;
+        }
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
         public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = convertView;
             if (rowView == null) {
@@ -230,13 +272,12 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 @Override
                 public void onClick(View view) {
                     int position = (Integer) favorite_button.getTag();
-                    Station curStation = list.get(position);
+
+                    Station curStation = original_list.get(position);
                     if (curStation.getFavorite()) {
                         curStation.setFavorite(false);
                         favorite_button.setBackgroundResource(R.drawable.unfavorite);
                         favorites.remove(curStation);
-
-
                     } else {
                         curStation.setFavorite(true);
                         favorite_button.setBackgroundResource(R.drawable.favorite);
@@ -256,11 +297,47 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                     //Toast.makeText(getActivity(), ""+view.getTag(), Toast.LENGTH_SHORT).show();
                 }
             });
-
-
-
             return rowView;
         }
+        private class StationFilter extends Filter{
 
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                FilterResults results = new FilterResults();
+                charSequence = charSequence.toString().toLowerCase();
+                if(charSequence == null || charSequence.length() == 0) {
+                    Log.e("", "HERE");
+                    results.values = original_list;
+                    results.count = original_list.size();
+                }
+                else {
+                    List<Station> result = new ArrayList<Station>();
+                    for (Station station : original_list) {
+                        if(station.getAddress().toLowerCase().contains(charSequence)) {
+                            result.add(station);
+                        }
+                    }
+                    results.values = result;
+                    results.count = result.size();
+                }
+
+
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                if(filterResults.count == 0)
+                {
+                    list = original_list;
+                    notifyDataSetInvalidated();
+                }
+                else
+                {
+                    list = (List<Station>) filterResults.values;
+                    notifyDataSetChanged();
+                }
+            }
+        }
     }
 }

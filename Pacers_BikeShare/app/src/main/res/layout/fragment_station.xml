@@ -28,7 +28,7 @@
                     android:layout_alignBottom="@+id/search_view"
                     android:layout_alignLeft="@+id/search_view"
                     android:layout_marginLeft="8dp"/>
-                <AutoCompleteTextView
+                <EditText
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginTop="5dp"

@@ -62,11 +62,11 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
             }
 
             if (prefix == null || prefix.length() == 0) {
-                synchronized (lock) {
+                //synchronized (lock) {
                     ArrayList<String> list = new ArrayList<String>(mOriginalValues);
                     results.values = list;
                     results.count = list.size();
-                }
+                //}
             } else {
                 final String prefixString = prefix.toString().toLowerCase();
 
