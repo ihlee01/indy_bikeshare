@@ -46,7 +46,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     private NotificationCompat.Builder mBuilder;
     private NotificationManager nManager;
     private int requestID = 001;
-    private boolean hasStopped = false;
+    private boolean vibrate = false;
 
     public TimerFragment() {
         // Required empty public constructor
@@ -70,12 +70,11 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         timer = new CounterClass(startTime, 1000,(TimerCountDown)TimerFragment.this);
         delimiter = 28;
         hms = "30:00";
-//              mBuilder.setOngoing(true);
-//              nManager.cancelAll();
         timerValue.setText(hms);
         mBuilder.setContentText("Time " + hms);
         // mId allows you to update the notification later on.
         nManager.notify(0, mBuilder.build());
+        nManager.cancelAll();
     }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -86,7 +85,24 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         View.OnClickListener start_handler = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timer.start();
+
+                if(!vibrate) {
+                    timer.start();
+                }
+                else
+                {
+                    startButton.setText("START");
+                    if(delimiter == 5)
+                    {
+                        delimiter = -1;
+                        mBuilder.setVibrate(new long[]{0});
+                    }
+                    else {
+                        delimiter = 5;
+                        mBuilder.setVibrate(new long[]{0});
+                        vibrate = true;
+                    }
+                }
                 startButton.setVisibility(View.GONE);
                 stopButton.setVisibility(View.VISIBLE);
             }
@@ -208,7 +224,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     }
 
     @Override
-    public void updateTime(String time) {
+    public void updateTime(String time, long temp) {
         timerValue.setText(time);
         startButton.setVisibility(View.GONE);
         stopButton.setVisibility(View.VISIBLE);
@@ -216,5 +232,15 @@ public class TimerFragment extends Fragment implements TimerCountDown{
 //        mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + time));
         // mId allows you to update the notification later on.
         nManager.notify(0, mBuilder.build());
+
+        if(delimiter == temp)
+        {
+            mBuilder.setVibrate(new long[]{500,500,500});
+            mBuilder.setOngoing(true);
+            vibrate = true;
+            stopButton.setVisibility(View.GONE);
+            startButton.setVisibility(View.VISIBLE);
+            startButton.setText("SNOOZE");
+        }
     }
 }

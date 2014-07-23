@@ -34,29 +34,7 @@ public class CounterClass extends CountDownTimer {
                         TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec)),
                 TimeUnit.MILLISECONDS.toSeconds(millisec) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
-        callback.updateTime(hms);
-/*
-                mBuilder.setContentText("Time: " + hms);
-                mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
-            // mId allows you to update the notification later on.
-          nManager.notify(0, mBuilder.build());
-
-
-
-            if(delimiter == temp)
-            {
-
-                // Make the notification play the default notification sound:
-                /*
-                Uri alarmSound = RingtoneManager
-                        .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                mBuilder.setSound(alarmSound);
-
-                mBuilder.setVibrate(new long[]{500,500,500});
-                mBuilder.setOngoing(true);
-
-            }
-*/
+        callback.updateTime(hms, temp);
     }
 
     @Override
