@@ -41,7 +41,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     private TextView timerValue;
     public static long startTime = 1800000; //milliseconds
     private String hms = "";
-    private long delimiter = 10;
+    private long delimiter = 28;
     public  CounterClass timer;
     private NotificationCompat.Builder mBuilder;
     private NotificationManager nManager;
@@ -65,6 +65,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     {
         timer.cancel();
         stopButton.setVisibility(View.GONE);
+        startButton.setText("START");
         startButton.setVisibility(View.VISIBLE);
         timer.cancel();
         timer = new CounterClass(startTime, 1000,(TimerCountDown)TimerFragment.this);
@@ -92,15 +93,15 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                 else
                 {
                     startButton.setText("START");
-                    if(delimiter == 5)
+                    vibrate = true;
+                    if(delimiter == 27)
                     {
                         delimiter = -1;
                         mBuilder.setVibrate(new long[]{0});
                     }
                     else {
-                        delimiter = 5;
+                        delimiter = 27;
                         mBuilder.setVibrate(new long[]{0});
-                        vibrate = true;
                     }
                 }
                 startButton.setVisibility(View.GONE);
