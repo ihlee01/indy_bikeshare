@@ -73,6 +73,9 @@ public class TimerFragment extends Fragment implements TimerCountDown{
 //              mBuilder.setOngoing(true);
 //              nManager.cancelAll();
         timerValue.setText(hms);
+        mBuilder.setContentText("Time " + hms);
+        // mId allows you to update the notification later on.
+        nManager.notify(0, mBuilder.build());
     }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -83,18 +86,6 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         View.OnClickListener start_handler = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
-                if(hasStopped) {
-                    String time = timerValue.getText().toString();
-                    String min = time.substring(0, time.indexOf(':'));
-                    String sec = time.substring(time.indexOf(':')+1);
-                    Integer min_milli = Integer.parseInt(min) * 60 * 1000;
-                    Integer sec_milli = Integer.parseInt(sec) * 1000;
-
-                    timer = new CounterClass((min_milli+sec_milli),1000,(TimerCountDown)TimerFragment.this);
-                }
-                hasStopped = false;
-                */
                 timer.start();
                 startButton.setVisibility(View.GONE);
                 stopButton.setVisibility(View.VISIBLE);
@@ -135,7 +126,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
 */
 
         //Disable notification for now
-        //showNotification();
+        showNotification();
     }
 
     private void showNotification(){
@@ -145,9 +136,10 @@ public class TimerFragment extends Fragment implements TimerCountDown{
 
         mBuilder = new NotificationCompat.Builder(
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
-        mBuilder.setContentTitle("Pacers Bike Share Timer")
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
+        mBuilder.setContentTitle("Pacers Bike Share Timer");
+                //.setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
         mBuilder.setAutoCancel(true).setPriority(2);
+        mBuilder.setContentText("Time " + hms);
 
         /*
         Intent snoozeIntent = new Intent(getActivity(), MainActivity.class);
@@ -220,5 +212,9 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         timerValue.setText(time);
         startButton.setVisibility(View.GONE);
         stopButton.setVisibility(View.VISIBLE);
+        mBuilder.setContentText("Time: " + time);
+//        mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + time));
+        // mId allows you to update the notification later on.
+        nManager.notify(0, mBuilder.build());
     }
 }
