@@ -8,6 +8,7 @@ import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,9 +38,13 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  *
  */
-public class GoogleMapFragment extends SupportMapFragment {
+public class GoogleMapFragment extends SupportMapFragment implements LocationListener {
 
     private GoogleMap mMap;
+    private LocationManager locationManager;
+    private static final long MIN_TIME = 400;
+    private static final float MIN_DISTANCE = 1000;
+
     private double currentLat;
     private double currentLong;
 
@@ -84,23 +89,22 @@ public class GoogleMapFragment extends SupportMapFragment {
 
         mMap = getMap();
 
+        /*
         CameraPosition.Builder cameraPositionBuilder = new CameraPosition.Builder();
-	        /*if(mLocationClient.getLastLocation() == null) {
-	            Log.e("LocationClient", "Last location is null!");
-	            mLocationClient.disconnect();
-	            return;
-	        }*/
         cameraPositionBuilder.target(new LatLng(39.773914,-86.157555));
-        cameraPositionBuilder.zoom((float) 13);
+        cameraPositionBuilder.zoom((float) 15);
         mMap.animateCamera(CameraUpdateFactory
                 .newCameraPosition(cameraPositionBuilder.build()));
+        */
 
-        String []address ={};
+        mMap.setMyLocationEnabled(true);
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                MIN_TIME,MIN_DISTANCE,this);
 
         /*Once there is a database access implement the following:
             1. If docks are full, have marker color change.
             2. If dock is about to be full, have another maker color change.
-            3. Create Custom InfoBox.
         */
 
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
@@ -108,9 +112,9 @@ public class GoogleMapFragment extends SupportMapFragment {
         {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(latitudes[i], longtitudes[i]))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)))
+                    .setTitle(title[i]);
         }
-        mMap.setMyLocationEnabled(true);
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
@@ -122,6 +126,29 @@ public class GoogleMapFragment extends SupportMapFragment {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+        mMap.animateCamera(cameraUpdate);
+        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
     }
 
 
@@ -141,7 +168,7 @@ public class GoogleMapFragment extends SupportMapFragment {
 
             // Getting the position from the marker
             LatLng latLng = marker.getPosition();
-
+            String name = marker.getTitle();
             // Getting reference to the TextView to set latitude
             TextView title = (TextView) v.findViewById(R.id.title);
 
@@ -151,7 +178,7 @@ public class GoogleMapFragment extends SupportMapFragment {
             currentLat = latLng.latitude;
             currentLong = latLng.longitude;
 
-            title.setText("Latitude:" + latLng.latitude + "\nLongitude:"+ latLng.longitude);
+            title.setText(name);
 
             description.setText("Click for Directions.");
 
