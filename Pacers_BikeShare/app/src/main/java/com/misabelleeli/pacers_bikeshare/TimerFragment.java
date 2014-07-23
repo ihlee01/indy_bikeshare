@@ -22,6 +22,9 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 
 
@@ -29,23 +32,25 @@ import java.util.concurrent.TimeUnit;
  * A simple {@link Fragment} subclass.
  *
  */
-public class TimerFragment extends Fragment {
+public class TimerFragment extends Fragment implements TimerCountDown{
 
     private Button startButton;
     private Button stopButton;
     private ImageButton resetButton;
 
     private TextView timerValue;
-    private long startTime = 1800000; //milliseconds
+    public static long startTime = 1800000; //milliseconds
     private String hms = "";
     private long delimiter = 10;
-    private CounterClass timer = new CounterClass(startTime,1000);
+    public  CounterClass timer;
     private NotificationCompat.Builder mBuilder;
     private NotificationManager nManager;
     private int requestID = 001;
     private boolean hasStopped = false;
+
     public TimerFragment() {
         // Required empty public constructor
+        timer = new CounterClass(startTime,1000, this);
     }
 
 
@@ -56,6 +61,19 @@ public class TimerFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_timer, container, false);
     }
 
+    public void stopTimer()
+    {
+        timer.cancel();
+        stopButton.setVisibility(View.GONE);
+        startButton.setVisibility(View.VISIBLE);
+        timer.cancel();
+        timer = new CounterClass(startTime, 1000,(TimerCountDown)TimerFragment.this);
+        delimiter = 28;
+        hms = "30:00";
+//              mBuilder.setOngoing(true);
+//              nManager.cancelAll();
+        timerValue.setText(hms);
+    }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -66,13 +84,6 @@ public class TimerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 /*
-                if Timer has never been started
-                {
-                    timer.start();
-                }
-                else {
-                    Resume here
-                }*/
                 if(hasStopped) {
                     String time = timerValue.getText().toString();
                     String min = time.substring(0, time.indexOf(':'));
@@ -80,9 +91,10 @@ public class TimerFragment extends Fragment {
                     Integer min_milli = Integer.parseInt(min) * 60 * 1000;
                     Integer sec_milli = Integer.parseInt(sec) * 1000;
 
-                    timer = new CounterClass((min_milli+sec_milli),1000);
+                    timer = new CounterClass((min_milli+sec_milli),1000,(TimerCountDown)TimerFragment.this);
                 }
                 hasStopped = false;
+                */
                 timer.start();
                 startButton.setVisibility(View.GONE);
                 stopButton.setVisibility(View.VISIBLE);
@@ -92,16 +104,9 @@ public class TimerFragment extends Fragment {
         View.OnClickListener stop_handler = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timer.cancel();
-                stopButton.setVisibility(View.GONE);
-                startButton.setVisibility(View.VISIBLE);
-                startButton.setText("RESUME");
-                startButton.setBackgroundColor(getResources().getColor(R.color.resume_yellow));
-                hasStopped = true;
+                stopTimer();
             }
         };
-
-
 
         timerValue = (TextView) getView().findViewById(R.id.timerValue);
 
@@ -111,39 +116,11 @@ public class TimerFragment extends Fragment {
         stopButton = (Button) getView().findViewById(R.id.stopbutton);
         stopButton.setOnClickListener(stop_handler);
 
-
-
-        //TODO
-        /*
-        Find a way to prevent timer from refresh value to 30:00 whenever the user comes back from the other tabs.
-        ESPECIALLY, when the user comes back from MAP.
-        This causes start button to show up while the countdown is still on.
-         */
-
-
-
-
-
-
-
         resetButton = (ImageButton) getView().findViewById(R.id.reset);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                stopButton.setVisibility(View.GONE);
-                startButton.setVisibility(View.VISIBLE);
-                if(startButton.getText().toString().equals("RESUME")) {
-                    startButton.setText("START");
-                    startButton.setBackgroundColor(getResources().getColor(R.color.start_green));
-                }
-                timer.cancel();
-                hasStopped = false;
-                timer = new CounterClass(startTime, 1000);
-                delimiter = 28;
-                hms = "30:00";
-//              mBuilder.setOngoing(true);
-//              nManager.cancelAll();
-                timerValue.setText(hms);
+                stopTimer();
             }
         });
 /*
@@ -233,68 +210,15 @@ public class TimerFragment extends Fragment {
 
     }
 
-    public class CounterClass extends CountDownTimer {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 
-        public CounterClass(long milliseconds, long countDownInterval)
-        {
-            super(milliseconds,countDownInterval);
-        }
-
-        @Override
-        public void onTick(long l) {
-            /*
-            long millisec = l;
-            long temp = TimeUnit.MILLISECONDS.toMinutes(millisec) -
-                    TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec));
-            hms = String.format("%02d:%02d:%02d",
-                    TimeUnit.MILLISECONDS.toHours(millisec),
-                    TimeUnit.MILLISECONDS.toMinutes(millisec) -
-                            TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec)),
-                    TimeUnit.MILLISECONDS.toSeconds(millisec) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
-            timerValue.setText(hms);
-            mBuilder.setContentText("Time: " + hms);
-            mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
-            // mId allows you to update the notification later on.
-            nManager.notify(0, mBuilder.build());*/
-            startButton.setVisibility(View.GONE);
-            stopButton.setVisibility(View.VISIBLE);
-            long millisec = l;
-            long temp = TimeUnit.MILLISECONDS.toMinutes(millisec) -
-                    TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec));
-            hms = String.format("%02d:%02d",
-                    TimeUnit.MILLISECONDS.toMinutes(millisec) -
-                            TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec)),
-                    TimeUnit.MILLISECONDS.toSeconds(millisec) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
-            timerValue.setText(hms);
-
-/*
-                mBuilder.setContentText("Time: " + hms);
-                mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Time: " + hms));
-            // mId allows you to update the notification later on.
-          nManager.notify(0, mBuilder.build());
-
-
-
-            if(delimiter == temp)
-            {
-
-                // Make the notification play the default notification sound:
-                /*
-                Uri alarmSound = RingtoneManager
-                        .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                mBuilder.setSound(alarmSound);
-
-                mBuilder.setVibrate(new long[]{500,500,500});
-                mBuilder.setOngoing(true);
-
-            }
-*/
-        }
-
-        @Override
-        public void onFinish() {
-        }
+    @Override
+    public void updateTime(String time) {
+        timerValue.setText(time);
+        startButton.setVisibility(View.GONE);
+        stopButton.setVisibility(View.VISIBLE);
     }
 }
