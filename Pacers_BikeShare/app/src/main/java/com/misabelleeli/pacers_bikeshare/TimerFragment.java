@@ -4,16 +4,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +15,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
-import java.lang.ref.WeakReference;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -36,12 +25,12 @@ public class TimerFragment extends Fragment implements TimerCountDown{
 
     private Button startButton;
     private Button stopButton;
-    private ImageButton resetButton;
+    private ImageButton addButton;
 
     private TextView timerValue;
     public static long startTime = 1800000; //milliseconds
     private String hms = "";
-    private long delimiter = 28;
+    private long delimiter = 10;
     public  CounterClass timer;
     private NotificationCompat.Builder mBuilder;
     private NotificationManager nManager;
@@ -67,9 +56,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         stopButton.setVisibility(View.GONE);
         startButton.setText("START");
         startButton.setVisibility(View.VISIBLE);
-        timer.cancel();
-        timer = new CounterClass(startTime, 1000,(TimerCountDown)TimerFragment.this);
-        delimiter = 28;
+        delimiter = 10;
         hms = "30:00";
         timerValue.setText(hms);
         mBuilder.setContentText("Time " + hms);
@@ -77,6 +64,21 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         nManager.notify(0, mBuilder.build());
         nManager.cancelAll();
     }
+
+    public void addTime()
+    {
+        startButton.setText("START");
+        stopButton.setVisibility(View.GONE);
+        startButton.setVisibility(View.VISIBLE);
+        timer = new CounterClass(startTime*2, 1000,(TimerCountDown)TimerFragment.this);
+        delimiter = 10;
+        hms = "60:00";
+        timerValue.setText(hms);
+        mBuilder.setContentText("Time " + hms);
+        // mId allows you to update the notification later on.
+        nManager.notify(0, mBuilder.build());
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -94,13 +96,19 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                 {
                     startButton.setText("START");
                     vibrate = true;
-                    if(delimiter == 27)
+                    if(delimiter == 5)
                     {
-                        delimiter = -1;
+                        delimiter = 1;
                         mBuilder.setVibrate(new long[]{0});
                     }
-                    else {
-                        delimiter = 27;
+                    else if (delimiter == 10)
+                    {
+                        delimiter = 5;
+                        mBuilder.setVibrate(new long[]{0});
+                    }
+                    else if(delimiter == 1)
+                    {
+                        delimiter = -1;
                         mBuilder.setVibrate(new long[]{0});
                     }
                 }
@@ -124,25 +132,14 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         stopButton = (Button) getView().findViewById(R.id.stopbutton);
         stopButton.setOnClickListener(stop_handler);
 
-        resetButton = (ImageButton) getView().findViewById(R.id.reset);
-        resetButton.setOnClickListener(new View.OnClickListener() {
+        addButton = (ImageButton) getView().findViewById(R.id.reset);
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                stopTimer();
+                addTime();
             }
         });
-/*
-        vibrateOff = (Button) getView().findViewById(R.id.vibrate_btn);
-        vibrateOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                delimiter = 0;
-                mBuilder.setVibrate(new long[]{0});
-            }
-        });
-*/
 
-        //Disable notification for now
         showNotification();
     }
 
