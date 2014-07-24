@@ -63,6 +63,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         // mId allows you to update the notification later on.
         nManager.notify(0, mBuilder.build());
         nManager.cancelAll();
+        timer = new CounterClass(startTime, 1000,(TimerCountDown)TimerFragment.this);
     }
 
     public void addTime()
@@ -114,7 +115,9 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                 }
                 startButton.setVisibility(View.GONE);
                 stopButton.setVisibility(View.VISIBLE);
+                showNotification();
             }
+
         };
 
         View.OnClickListener stop_handler = new View.OnClickListener() {
@@ -139,8 +142,6 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                 addTime();
             }
         });
-
-        showNotification();
     }
 
     private void showNotification(){
