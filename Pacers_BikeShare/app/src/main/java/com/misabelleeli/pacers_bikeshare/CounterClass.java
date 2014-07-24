@@ -27,14 +27,12 @@ public class CounterClass extends CountDownTimer {
             // mId allows you to update the notification later on.
             nManager.notify(0, mBuilder.build());*/
         long millisec = l;
-        long temp = TimeUnit.MILLISECONDS.toMinutes(millisec) -
+        long min = TimeUnit.MILLISECONDS.toMinutes(millisec) -
                 TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec));
-        String hms = String.format("%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes(millisec) -
-                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisec)),
-                TimeUnit.MILLISECONDS.toSeconds(millisec) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
-        callback.updateTime(hms, temp);
+        long sec = TimeUnit.MILLISECONDS.toSeconds(millisec) -
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec));
+        String hms = String.format("%02d:%02d",min,sec);
+        callback.updateTime(hms, min, sec);
     }
 
     @Override

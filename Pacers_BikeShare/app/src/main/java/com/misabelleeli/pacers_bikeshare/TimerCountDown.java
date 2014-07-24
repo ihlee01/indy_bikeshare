@@ -5,5 +5,5 @@ package com.misabelleeli.pacers_bikeshare;
  */
 public interface TimerCountDown {
 
-    public void updateTime(String time, long temp);
+    public void updateTime(String time,long min, long sec);
 }
