@@ -41,7 +41,6 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     private NotificationManager nManager;
     private int requestID = 001;
     private boolean vibrate = false;
-    private AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.4F);
 
     public TimerFragment() {
         // Required empty public constructor
@@ -53,7 +52,6 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        buttonClick.setDuration(50);
 
         return inflater.inflate(R.layout.fragment_timer, container, false);
     }
@@ -93,66 +91,49 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         super.onViewCreated(view, savedInstanceState);
         RelativeLayout timerLayout = (RelativeLayout) getView().findViewById(R.id.timerLayout);
 
-        //listener handler
-        View.OnClickListener start_handler = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.startAnimation(buttonClick);
-                /*if(!vibrate) {
-                    timer.start();
-                }
-                else
-                {
-                    startButton.setText("START");
-                    vibrate = true;
-                    if(delimiter == 5)
-                    {
-                        delimiter = 1;
-                        mBuilder.setVibrate(new long[]{0});
-                    }
-                    else if (delimiter == 10)
-                    {
-                        delimiter = 5;
-                        mBuilder.setVibrate(new long[]{0});
-                    }
-                    else if(delimiter == 1)
-                    {
-                        delimiter = -1;
-                        mBuilder.setVibrate(new long[]{0});
-                    }
-                }
-                startButton.setVisibility(View.GONE);
-                stopButton.setVisibility(View.VISIBLE);
-                showNotification();
-                */
-            }
-
-        };
-
-        View.OnClickListener stop_handler = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                stopTimer();
-            }
-        };
-
         timerValue = (TextView) getView().findViewById(R.id.timerValue);
 
         startButton = (Button) getView().findViewById(R.id.startbutton);
 
-        startButton.setOnClickListener(start_handler);
-        /*startButton.setOnTouchListener(new View.OnTouchListener() {
+        //startButton.setOnClickListener(start_handler);
+        startButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch(motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        Log.e("", "ERHE?");
-                        view.getBackground().setColorFilter(0xe0f47521, PorterDuff.Mode.SRC_ATOP);
+                        view.setBackgroundColor(view.getResources().getColor(R.color.green_pressed));
                         view.invalidate();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        view.getBackground().clearColorFilter();
+                        view.setBackgroundColor(view.getResources().getColor(R.color.start_green));
+                        if(!vibrate) {
+                            timer.start();
+                        }
+                        else
+                        {
+                            startButton.setText("START");
+                            vibrate = true;
+                            if(delimiter == 5)
+                            {
+                                delimiter = 1;
+                                mBuilder.setVibrate(new long[]{0});
+                            }
+                            else if (delimiter == 10)
+                            {
+                                delimiter = 5;
+                                mBuilder.setVibrate(new long[]{0});
+                            }
+                            else if(delimiter == 1)
+                            {
+                                delimiter = -1;
+                                mBuilder.setVibrate(new long[]{0});
+                            }
+                        }
+
+                        startButton.setVisibility(View.GONE);
+                        stopButton.setVisibility(View.VISIBLE);
+                        showNotification();
                         view.invalidate();
                         break;
                     }
@@ -160,9 +141,34 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                 return false;
             }
         });
-*/
+
         stopButton = (Button) getView().findViewById(R.id.stopbutton);
-        stopButton.setOnClickListener(stop_handler);
+        //stopButton.setOnClickListener(stop_handler);
+        stopButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        view.setBackgroundColor(view.getResources().getColor(R.color.red_pressed));
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        view.setBackgroundColor(view.getResources().getColor(R.color.stop_red));
+                        stopTimer();
+                        stopButton.setVisibility(View.GONE);
+                        startButton.setVisibility(View.VISIBLE);
+                        view.invalidate();
+
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+
+
+
 
         addButton = (ImageButton) getView().findViewById(R.id.reset);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -181,7 +187,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         mBuilder = new NotificationCompat.Builder(
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
         mBuilder.setContentTitle("Pacers Bike Share Timer");
-                //.setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
+        //.setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
         mBuilder.setAutoCancel(true).setPriority(2);
         mBuilder.setContentText("Time " + hms);
 
