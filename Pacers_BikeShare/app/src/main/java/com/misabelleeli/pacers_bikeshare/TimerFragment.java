@@ -4,13 +4,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -37,6 +41,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     private NotificationManager nManager;
     private int requestID = 001;
     private boolean vibrate = false;
+    private AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.4F);
 
     public TimerFragment() {
         // Required empty public constructor
@@ -48,6 +53,8 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        buttonClick.setDuration(50);
+
         return inflater.inflate(R.layout.fragment_timer, container, false);
     }
 
@@ -90,8 +97,8 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         View.OnClickListener start_handler = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(!vibrate) {
+                view.startAnimation(buttonClick);
+                /*if(!vibrate) {
                     timer.start();
                 }
                 else
@@ -117,6 +124,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                 startButton.setVisibility(View.GONE);
                 stopButton.setVisibility(View.VISIBLE);
                 showNotification();
+                */
             }
 
         };
@@ -131,8 +139,28 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         timerValue = (TextView) getView().findViewById(R.id.timerValue);
 
         startButton = (Button) getView().findViewById(R.id.startbutton);
-        startButton.setOnClickListener(start_handler);
 
+        startButton.setOnClickListener(start_handler);
+        /*startButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch(motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        Log.e("", "ERHE?");
+                        view.getBackground().setColorFilter(0xe0f47521, PorterDuff.Mode.SRC_ATOP);
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+*/
         stopButton = (Button) getView().findViewById(R.id.stopbutton);
         stopButton.setOnClickListener(stop_handler);
 
