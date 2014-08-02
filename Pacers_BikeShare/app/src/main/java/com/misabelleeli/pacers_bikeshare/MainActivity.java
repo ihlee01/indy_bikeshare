@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -81,7 +82,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         // set dialog message
         alertDialogBuilder
-                .setMessage("Do you really want to exit?")
+                .setMessage("Are you sure you want to exit?")
                 .setCancelable(false)
                 .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
@@ -108,6 +109,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_settings).setVisible(false);
         return true;
     }
@@ -118,7 +120,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_refresh) {
             return true;
         }
         return super.onOptionsItemSelected(item);

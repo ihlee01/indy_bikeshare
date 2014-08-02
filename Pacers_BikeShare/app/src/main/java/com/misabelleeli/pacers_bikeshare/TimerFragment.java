@@ -120,7 +120,6 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                         view.setBackgroundColor(view.getResources().getColor(R.color.start_green));
                         if(!vibrate) {
                             timer.start();
-                            Log.e("Start Time", startTime+"");
                         }
                         else
                         {

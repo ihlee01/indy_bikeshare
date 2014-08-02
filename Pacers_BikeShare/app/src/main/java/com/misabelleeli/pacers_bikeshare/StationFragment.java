@@ -4,8 +4,11 @@ package com.misabelleeli.pacers_bikeshare;
 
 import android.app.Service;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -29,6 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.nhaarman.listviewanimations.swinginadapters.prepared.ScaleInAnimationAdapter;
+import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,7 +53,9 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     private List<Station> favorites = new ArrayList<Station>();
     private Map<String, Station> stationMap = new HashMap<String, Station>();
     private ArrayList<String> searchList = new ArrayList<String>();
+    private SwingBottomInAnimationAdapter swing;
     private ArrayAdapter<Station> adapter;
+    private SwipeRefreshLayout swipe_layout;
     private ListView myListView;
     private TextView defaultBackgroundView;
 
@@ -73,65 +81,28 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         favoriteToggle.setOnCheckedChangeListener(this);
 
         defaultBackgroundView = (TextView) rootView.findViewById(R.id.defaultBackgroundView);
-
+        swipe_layout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+        swipe_layout.setColorScheme(
+                R.color.blue,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
         myListView = (ListView) rootView.findViewById(R.id.stationsListview);
-
-
-        /*AutoCompleteAdapter autoAdapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, android.R.id.text1, searchList);
-        searchView.setAdapter(autoAdapter);
-
-        //When user clear the search box -> Refresh listview
-        searchView.setOnKeyListener(new View.OnKeyListener() {
+        swipe_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                String input = searchView.getText() + "";
-                if(input.equals(""))
-                {
-                    generateList(myListView);
-                }
-                return false;
-            }
-        });
-
-        //Search implementation
-        searchView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                boolean handled = false;
-                if (i == EditorInfo.IME_ACTION_NEXT) {
-                    //Hide Keyboard
-                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
-                    String input = searchView.getText()+"";
-                    if(stationMap.containsKey(input))
-                    {
-                        //Search Match
-                        List<Station> result_array = new ArrayList<Station>();
-                        result_array.add(stationMap.get(input));
-                        //sort by distance
-                        Collections.sort(result_array);
-                        adapter = new MyListAdapter(result_array);
-                        myListView.setAdapter(adapter);
-                        return true;
-                    }
-                    else if(input.equals(""))
-                    {
+            public void onRefresh() {
+                //swipe_layout.setRefreshing(false);
+                new Handler().postDelayed(new Runnable() {
+                    @Override public void run() {
                         generateList(myListView);
+                        swipe_layout.setRefreshing(false);
                     }
-                    else {
-                        Toast.makeText(getActivity(), "No Search Result", Toast.LENGTH_SHORT).show();
-                        defaultBackgroundView.setVisibility(View.VISIBLE);
-                        myListView.setAdapter(null);
-                    }
-                    handled = true;
-                }
-
-                return handled;
+                }, 2000);
             }
         });
-        */
 
+
+        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view, stations);
 
         generateList(myListView);
 
@@ -180,7 +151,9 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     private void generateList(ListView view) {
         defaultBackgroundView.setVisibility(View.GONE);
         adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view, stations);
-        view.setAdapter(adapter);
+        swing = new SwingBottomInAnimationAdapter(adapter);
+        swing.setAbsListView(view);
+        view.setAdapter(swing);
         view.setTextFilterEnabled(true);
     }
 
@@ -195,7 +168,9 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             //sort by distance
             Collections.sort(favorites);
             adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view, favorites);
-            myListView.setAdapter(adapter);
+            swing = new SwingBottomInAnimationAdapter(adapter);
+            swing.setAbsListView(myListView);
+            myListView.setAdapter(swing);
         }
         else {
             generateList(myListView);

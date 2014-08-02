@@ -58,7 +58,7 @@
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Example</item>
     </style>
     <style name="Theme.MyAppTheme.ActionBar.TitleTextStyle" parent="android:style/TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">#203545</item>
+        <item name="android:textColor">@color/pacers_navy</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!-- Base application theme. -->
