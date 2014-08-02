@@ -4,6 +4,7 @@ package com.misabelleeli.pacers_bikeshare;
 
 import android.app.Service;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.nhaarman.listviewanimations.swinginadapters.prepared.ScaleInAnimationAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
 import java.util.ArrayList;
@@ -40,14 +40,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 
-/**
- * A simple {@link Fragment} subclass.
- *
- */
 public class StationFragment extends Fragment implements CompoundButton.OnCheckedChangeListener{
     private List<Station> stations = new ArrayList<Station>();
     private List<Station> favorites = new ArrayList<Station>();
@@ -58,8 +53,10 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     private SwipeRefreshLayout swipe_layout;
     private ListView myListView;
     private TextView defaultBackgroundView;
+    private EditText searchView;
 
-    EditText searchView;
+    private SharedPreferences mPrefs;
+
 
     public StationFragment() {
         // Required empty public constructor
@@ -69,13 +66,21 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_station, container, false);
+
+        
+
+        mPrefs = getActivity().getSharedPreferences("favorite", Context.MODE_PRIVATE);
+
+
+
+
         if(stations.size() == 0)
             populateStations();
 
         //Ascending order by distance.
         Collections.sort(stations);
 
-        View rootView = inflater.inflate(R.layout.fragment_station, container, false);
 
         ToggleButton favoriteToggle = (ToggleButton) rootView.findViewById(R.id.favoriteToggle);
         favoriteToggle.setOnCheckedChangeListener(this);
