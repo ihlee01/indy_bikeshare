@@ -21,13 +21,21 @@
         android:gravity="center"
         />
         <ImageButton
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:id="@+id/reset"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/plus_button"
             android:layout_marginRight="4dp"
-            android:background="@drawable/reset_button"
+            android:background="@drawable/plus"
             android:layout_marginTop="310dp"
             android:layout_alignRight="@+id/timerValue" />
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/minus_button"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/minus"
+            android:layout_marginTop="310dp"
+            android:layout_alignLeft="@+id/timerValue" />
 
     </RelativeLayout>
     <Button
