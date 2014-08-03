@@ -1,9 +1,11 @@
 package com.misabelleeli.pacers_bikeshare;
 
+import java.io.Serializable;
+
 /**
  * Created by Lee on 2014-07-14.
  */
-public class Station implements Comparable<Station> {
+public class Station implements Comparable<Station>, Serializable {
     private String address;
     private int bikes;
     private int docks;

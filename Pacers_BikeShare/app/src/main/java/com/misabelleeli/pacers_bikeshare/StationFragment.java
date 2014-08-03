@@ -13,6 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,6 +36,11 @@ import android.widget.ToggleButton;
 
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,6 +62,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     private EditText searchView;
 
     private SharedPreferences mPrefs;
+    private ObjectOutputStream oos = null;
+    private ObjectInputStream ois = null;
 
 
     public StationFragment() {
@@ -68,12 +76,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_station, container, false);
 
-        
-
         mPrefs = getActivity().getSharedPreferences("favorite", Context.MODE_PRIVATE);
-
-
-
 
         if(stations.size() == 0)
             populateStations();
@@ -148,12 +151,38 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         stations.add(new Station("525 N. Capitol Ave", 6, 1, 35));
         stations.add(new Station("401 University Blvd", 12, 4, 37));
         stations.add(new Station("Indiana Government Center", 4, 5, 40));
+
+        favorites = readObject("favorites");
+
         for(int i = 0; i < stations.size(); i++) {
+            for(int j = 0 ; j < favorites.size(); j++) {
+                if(stations.get(i).getAddress().equals(favorites.get(j).getAddress())) {
+                    stations.get(i).setFavorite(true);
+                    stations.get(i).getAddress();
+                }
+            }
             searchList.add(stations.get(i).getAddress());
             stationMap.put(stations.get(i).getAddress(), stations.get(i));
         }
+
     }
     private void generateList(ListView view) {
+
+        //Update Favorites
+        for(int i = 0 ; i < favorites.size(); i++) {
+            Log.e("Before Generate", favorites.get(i).getAddress());
+        }
+        for(int i = 0; i < stations.size(); i++) {
+            for(int j = 0 ; j < favorites.size(); j++) {
+                if(stations.get(i).getAddress().equals(favorites.get(j).getAddress())) {
+                    stations.get(i).setFavorite(true);
+                    break;
+                }
+                else {
+                    stations.get(i).setFavorite(false);
+                }
+            }
+        }
         defaultBackgroundView.setVisibility(View.GONE);
         adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view, stations);
         swing = new SwingBottomInAnimationAdapter(adapter);
@@ -164,6 +193,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        favorites = readObject("favorites");
         if(b) {
             if(favorites.size() == 0) {
                 defaultBackgroundView.setVisibility(View.VISIBLE);
@@ -181,8 +211,41 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             generateList(myListView);
         }
     }
+    public List<Station> readObject(String key) {
+        ByteArrayInputStream bais;
+        List<Station> result = null;
+        try {
+            String encodedString = mPrefs.getString(key, null);
+            byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
+            bais = new ByteArrayInputStream(input);
+            ois = new ObjectInputStream(bais);
+
+            result = (ArrayList<Station>)ois.readObject();
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    public void storeObject(String key, List<Station> obj) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(obj);
+            byte[] output = baos.toByteArray();
+            String encodedString = Base64.encodeToString(output, Base64.DEFAULT);
+            SharedPreferences.Editor editor = mPrefs.edit();
+            editor.remove(key);
+            editor.putString(key, encodedString);
+            editor.commit();
 
 
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private class MyListAdapter extends ArrayAdapter<Station> implements Filterable {
         List<Station> list;
         List<Station> original_list;
@@ -247,21 +310,31 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             else {
                 favorite_button.setBackgroundResource(R.drawable.unfavorite);
             }
+
+
             favorite_button.setTag(position);
             favorite_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int position = (Integer) favorite_button.getTag();
-
+                    favorites = readObject("favorites");
                     Station curStation = original_list.get(position);
                     if (curStation.getFavorite()) {
                         curStation.setFavorite(false);
                         favorite_button.setBackgroundResource(R.drawable.unfavorite);
-                        favorites.remove(curStation);
+                        ArrayList<Station> finalFavorites = new ArrayList<Station>();
+                        for(int i = 0 ; i < favorites.size(); i++) {
+                            if(!curStation.getAddress().equals(favorites.get(i).getAddress()))
+                            {
+                                finalFavorites.add(favorites.get(i));
+                            }
+                        }
+                        storeObject("favorites", finalFavorites);
                     } else {
                         curStation.setFavorite(true);
                         favorite_button.setBackgroundResource(R.drawable.favorite);
                         favorites.add(curStation);
+                        storeObject("favorites", favorites);
                     }
 
                 }
