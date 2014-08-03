@@ -24,7 +24,7 @@
                 android:gravity="center|center_vertical"
                 android:text="14"
                 android:textSize="30sp"
-                android:textColor="#19B900"
+                android:textColor="@color/start_green"
                 android:id="@+id/station_bikes"
                 android:layout_marginLeft="0dp"
                 android:layout_weight="0.6"/>
@@ -40,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.1"
-                android:background="#19B900"/>
+                android:background="@color/start_green"/>
             </LinearLayout>
         <LinearLayout
             android:layout_width="45dp"
@@ -53,7 +53,7 @@
                 android:gravity="center|center_vertical"
                 android:text="14"
                 android:textSize="30sp"
-                android:textColor="@color/pacers_yellow"
+                android:textColor="@color/stop_red"
                 android:id="@+id/station_docks"
                 android:layout_weight="0.6"/>
             <TextView
@@ -68,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.1"
-                android:background="@color/pacers_yellow"/>
+                android:background="@color/stop_red"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
