@@ -6,14 +6,15 @@ import java.io.Serializable;
  * Created by Lee on 2014-07-14.
  */
 public class Station implements Comparable<Station>, Serializable {
+    private String name;
     private String address;
     private int bikes;
     private int docks;
     private float distance;
     private boolean favorite;
 
-    public Station(String address, int bikes, int docks, float distance) {
-
+    public Station(String name, String address, int bikes, int docks, float distance) {
+        this.name = name;
         this.address = address;
         this.bikes = bikes;
         this.docks = docks;
@@ -61,6 +62,10 @@ public class Station implements Comparable<Station>, Serializable {
     public boolean getFavorite() {
         return favorite;
     }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
 
     @Override
     public int compareTo(Station station) {

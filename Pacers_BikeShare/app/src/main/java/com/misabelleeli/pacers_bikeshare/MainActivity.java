@@ -30,8 +30,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         mPrefs = this.getSharedPreferences("favorite", MODE_PRIVATE);
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putString("favorites", "initial");
-        editor.commit();
+        if(mPrefs.getString("favorites", null) == null)
+        {
+            editor.putString("favorites", "initial");
+            editor.commit();
+        }
+
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());

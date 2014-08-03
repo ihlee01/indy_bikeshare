@@ -52,8 +52,6 @@ import java.util.Map;
 public class StationFragment extends Fragment implements CompoundButton.OnCheckedChangeListener{
     private List<Station> stations = new ArrayList<Station>();
     private List<Station> favorites = new ArrayList<Station>();
-    private Map<String, Station> stationMap = new HashMap<String, Station>();
-    private ArrayList<String> searchList = new ArrayList<String>();
     private SwingBottomInAnimationAdapter swing;
     private ArrayAdapter<Station> adapter;
     private SwipeRefreshLayout swipe_layout;
@@ -65,6 +63,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     private ObjectOutputStream oos = null;
     private ObjectInputStream ois = null;
 
+    private View rootView;
+
 
     public StationFragment() {
         // Required empty public constructor
@@ -74,18 +74,19 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_station, container, false);
+        rootView = inflater.inflate(R.layout.fragment_station, container, false);
 
         mPrefs = getActivity().getSharedPreferences("favorite", Context.MODE_PRIVATE);
 
         if(stations.size() == 0)
+        {
             populateStations();
+        }
 
         //Ascending order by distance.
         Collections.sort(stations);
 
-
-        ToggleButton favoriteToggle = (ToggleButton) rootView.findViewById(R.id.favoriteToggle);
+        final ToggleButton favoriteToggle = (ToggleButton) rootView.findViewById(R.id.favoriteToggle);
         favoriteToggle.setOnCheckedChangeListener(this);
 
         defaultBackgroundView = (TextView) rootView.findViewById(R.id.defaultBackgroundView);
@@ -99,18 +100,36 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         swipe_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //swipe_layout.setRefreshing(false);
                 new Handler().postDelayed(new Runnable() {
                     @Override public void run() {
-                        generateList(myListView);
+                        if(!searchView.getText().toString().equals("")) {
+                            searchView.setText("");
+                        }
+                        InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        keyboard.hideSoftInputFromWindow(rootView.getWindowToken(), 0);
+                        if(favoriteToggle.isChecked()) {
+                            favorites = readObject("favorites");
+                            if(favorites.size() == 0) {
+                                defaultBackgroundView.setVisibility(View.VISIBLE);
+                                myListView.setAdapter(null);
+                            }
+                            else {
+                                //sort by distance
+                                Collections.sort(favorites);
+                                adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, favorites);
+                                swing = new SwingBottomInAnimationAdapter(adapter);
+                                swing.setAbsListView(myListView);
+                                myListView.setAdapter(swing);
+                            }
+                        } else {
+                            generateList(myListView);
+                        }
                         swipe_layout.setRefreshing(false);
                     }
                 }, 2000);
             }
         });
-
-
-        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view, stations);
+        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, stations);
 
         generateList(myListView);
 
@@ -122,7 +141,9 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-                adapter.getFilter().filter(charSequence.toString());
+                if(!searchView.getText().toString().equals("")) {
+                    adapter.getFilter().filter(charSequence.toString());
+                }
             }
 
             @Override
@@ -140,37 +161,45 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     }
 
     private void populateStations() {
-        stations.add(new Station("401 E. Michigan St", 8, 3, 4));
-        stations.add(new Station("Bankers Life Fieldhouse", 5, 12, 16));
-        stations.add(new Station("40 E. St. Clair St", 6, 3, 21));
-        stations.add(new Station("City County Building", 6, 8, 23));
-        stations.add(new Station("City market", 17, 5, 25));
-        stations.add(new Station("Convention Center", 5, 9, 26));
-        stations.add(new Station("680 Massachusetts Ave", 9, 1, 70));
-        stations.add(new Station("Fountain Square", 10, 13, 30));
-        stations.add(new Station("525 N. Capitol Ave", 6, 1, 35));
-        stations.add(new Station("401 University Blvd", 12, 4, 37));
-        stations.add(new Station("Indiana Government Center", 4, 5, 40));
 
-        favorites = readObject("favorites");
+        stations.add(new Station("IUPUI Campus Center", "401 Univesity Blvd", 7, 9, 4));
+        stations.add(new Station("North End of Canal", "1325 Canal Walk", 7, 4, 8));
+        stations.add(new Station("Michigan/Blackford", "525 N. Blackford St", 12, 4, 12));
+        stations.add(new Station("White River State Park", "650 s. Washington St", 4, 9, 20));
+        stations.add(new Station("Victory Field", "99 S. West St", 14, 2, 25));
+        stations.add(new Station("Government Center", "364 W. Washington St", 2, 10, 30));
+        stations.add(new Station("Convention Center", "151 W. Georgia St", 14, 1, 40));
+        stations.add(new Station("Michigan/Senate", "300 N. Michigan St", 4, 8, 45));
+        stations.add(new Station("Glick Peace Walk", "625 N. Capitol Ave", 12, 4, 52));
+        stations.add(new Station("Convention Center", "50 S. Capitol Ave", 7, 5, 58));
+        stations.add(new Station("Washington/Illinois", "101 W. Washington St", 12, 0, 62));
+        stations.add(new Station("Washington/Meredian", "2 W. Washington St", 4, 10, 76));
+        stations.add(new Station("City County Building", "200 E. Washington St", 10, 5, 80));
+        stations.add(new Station("Central Library", "40 E. St. Clair St", 1, 5, 82));
+        stations.add(new Station("City Market", "108 N. Alabama St", 2, 8, 90));
+        stations.add(new Station("Athenaeum", "401 E. Michigan St", 12, 4, 93));
+        stations.add(new Station("Monument Circle", "121 Monument Circle", 2, 8, 99));
+        stations.add(new Station("Bankers Life Fieldhouse", "169 s. Pennsylvania St",6, 8, 30));
+        stations.add(new Station("City County Building", "200 E. Washington St", 1, 7, 25));
+        stations.add(new Station("Fletcher Place", "531 Virginia Ave", 4, 8, 60));
+        stations.add(new Station("Mass Ave/Alabama", "372 N. Alabama St", 5, 5, 14));
+        stations.add(new Station("Fletcher Place", "749 Virginia Ave", 12, 2, 65));
+        stations.add(new Station("Mass Ave/Park", "680 Mass Ave", 1, 9, 24));
+        stations.add(new Station("North Mass Ave", "949 Mass Ave", 5, 9, 85));
+        stations.add(new Station("Fountain Square", "1066 Virginia Ave", 12, 2, 95));
 
-        for(int i = 0; i < stations.size(); i++) {
-            for(int j = 0 ; j < favorites.size(); j++) {
-                if(stations.get(i).getAddress().equals(favorites.get(j).getAddress())) {
-                    stations.get(i).setFavorite(true);
-                }
-            }
-            searchList.add(stations.get(i).getAddress());
-            stationMap.put(stations.get(i).getAddress(), stations.get(i));
-        }
 
     }
     private void generateList(ListView view) {
 
         //Update Favorites
+        favorites = readObject("favorites");
         for(int i = 0; i < stations.size(); i++) {
+            if(favorites.size() == 0) {
+                stations.get(i).setFavorite(false);
+            }
             for(int j = 0 ; j < favorites.size(); j++) {
-                if(stations.get(i).getAddress().equals(favorites.get(j).getAddress())) {
+                if(stations.get(i).getName().equals(favorites.get(j).getName())) {
                     stations.get(i).setFavorite(true);
                     break;
                 }
@@ -180,7 +209,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             }
         }
         defaultBackgroundView.setVisibility(View.GONE);
-        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view, stations);
+        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, stations);
         swing = new SwingBottomInAnimationAdapter(adapter);
         swing.setAbsListView(view);
         view.setAdapter(swing);
@@ -198,7 +227,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             }
             //sort by distance
             Collections.sort(favorites);
-            adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view, favorites);
+            adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, favorites);
             swing = new SwingBottomInAnimationAdapter(adapter);
             swing.setAbsListView(myListView);
             myListView.setAdapter(swing);
@@ -213,7 +242,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         if (!mPrefs.getString(key, null).equals("initial")) {
             try {
                 String encodedString = mPrefs.getString(key, null);
-                Log.e("", encodedString);
                 byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
                 bais = new ByteArrayInputStream(input);
                 ois = new ObjectInputStream(bais);
@@ -240,6 +268,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             editor.remove(key);
             editor.putString(key, encodedString);
             editor.commit();
+
 
 
         }catch (IOException e) {
@@ -272,19 +301,35 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             View rowView = convertView;
             if (rowView == null) {
                 LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = inflater.inflate(R.layout.station_view, parent, false);
+                rowView = inflater.inflate(R.layout.station_view2, parent, false);
             }
             Station curStation = list.get(position);
+            TextView station_name = (TextView)rowView.findViewById(R.id.station_name);
+            TextView station_address = (TextView)rowView.findViewById(R.id.station_address);
+            TextView station_bikes = (TextView)rowView.findViewById(R.id.station_bikes);
+            TextView station_docks = (TextView)rowView.findViewById(R.id.station_docks);
             TextView address_view = (TextView)rowView.findViewById(R.id.address_view);
             TextView status_view = (TextView)rowView.findViewById(R.id.status_view);
             TextView distance_view = (TextView)rowView.findViewById(R.id.distance_view);
             final ImageButton favorite_button = (ImageButton)rowView.findViewById(R.id.favorite_button);
             ImageView icon_view = (ImageView)rowView.findViewById(R.id.bike_icon);
 
-            address_view.setText(curStation.getAddress());
+            //Station name
+            station_name.setText(curStation.getName());
 
-            String status = "Bikes: <b><font color=\"#0075B0\">" + curStation.getBikes() + "</font></b> | Docks: <b><font color=\"#E05206\">" + curStation.getDocks()+"</font></b>";
+            //Station Address
+            station_address.setText(curStation.getAddress());
+
+            //Station Bikes
+            station_bikes.setText(curStation.getBikes()+"");
+
+            //Station Docks
+            station_docks.setText(curStation.getDocks()+"");
+
+
+            /*String status = "Bikes: <b><font color=\"#0075B0\">" + curStation.getBikes() + "</font></b> | Docks: <b><font color=\"#E05206\">" + curStation.getDocks()+"</font></b>";
             status_view.setText(Html.fromHtml(status));
+
 
             //Icon setting
             float totalBike = curStation.getBikes() + curStation.getDocks();
@@ -301,7 +346,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             else {
                 icon_view.setImageResource(R.drawable.bike_icon_full);
             }
-
+            */
             distance_view.setText(curStation.getDistance() + " mi");
 
             if(curStation.getFavorite()) {
@@ -339,7 +384,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
 
                 }
             });
-            rowView.setTag(curStation.getAddress());
+
+            rowView.setTag(curStation.getName());
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -365,7 +411,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 else {
                     List<Station> result = new ArrayList<Station>();
                     for (Station station : original_list) {
-                        if(station.getAddress().toLowerCase().contains(charSequence)) {
+                        if(station.getName().toLowerCase().contains(charSequence)) {
                             result.add(station);
                         }
                     }

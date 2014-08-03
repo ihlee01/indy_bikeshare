@@ -2,7 +2,7 @@
 <resources>
     <color name="white">#fff</color>
     <color name="grey">#8C8C8C</color>
-    <color name="green_pressed">#7AB800</color>
+    <color name="green_pressed">#ff669900</color>
     <color name="start_green">#89C60F</color>
     <color name="stop_red">#E05206</color>
     <color name="red_pressed">#E13A07</color>
@@ -10,4 +10,5 @@
     <color name="pacers_yellow">#EAAB00</color>
     <color name="pacers_navy">#002F62</color>
     <color name="blue">#00A1DE</color>
+    <color name="orange">#FFA100</color>
 </resources>
