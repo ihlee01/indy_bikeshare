@@ -19,6 +19,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         f.add(new GoogleMapFragment());
         f.add(new TimerFragment());
         f.add(new StationFragment());
+
         //f.add(new AboutFragment());
     }
 

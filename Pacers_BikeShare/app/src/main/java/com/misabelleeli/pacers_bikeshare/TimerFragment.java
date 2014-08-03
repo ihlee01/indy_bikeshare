@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -55,7 +56,6 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         return inflater.inflate(R.layout.fragment_timer, container, false);
     }
 
@@ -102,6 +102,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         RelativeLayout timerLayout = (RelativeLayout) getView().findViewById(R.id.timerLayout);
 
         timerValue = (TextView) getView().findViewById(R.id.timerValue);
@@ -110,7 +111,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         startButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch(motionEvent.getAction()) {
+                switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         view.setBackgroundColor(view.getResources().getColor(R.color.green_pressed));
                         view.invalidate();
@@ -118,25 +119,18 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                     }
                     case MotionEvent.ACTION_UP: {
                         view.setBackgroundColor(view.getResources().getColor(R.color.start_green));
-                        if(!vibrate) {
+                        if (!vibrate) {
                             timer.start();
-                        }
-                        else
-                        {
+                        } else {
                             startButton.setText("START");
                             vibrate = true;
-                            if(delimiter == 5)
-                            {
+                            if (delimiter == 5) {
                                 delimiter = 1;
                                 mBuilder.setVibrate(new long[]{0});
-                            }
-                            else if (delimiter == 10)
-                            {
+                            } else if (delimiter == 10) {
                                 delimiter = 5;
                                 mBuilder.setVibrate(new long[]{0});
-                            }
-                            else if(delimiter == 1)
-                            {
+                            } else if (delimiter == 1) {
                                 delimiter = -1;
                                 mBuilder.setVibrate(new long[]{0});
                             }
@@ -191,6 +185,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                 minusTime();
             }
         });
+
     }
 
     private void showNotification(){

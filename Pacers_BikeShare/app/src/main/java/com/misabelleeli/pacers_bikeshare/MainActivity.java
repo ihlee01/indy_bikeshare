@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -21,10 +22,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public ActionBar actionBar;
     public ViewPager viewPager;
     public TabsPagerAdapter mAdapter;
+    private SharedPreferences mPrefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mPrefs = this.getSharedPreferences("favorite", MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString("favorites", "initial");
+        editor.commit();
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
@@ -51,6 +58,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         actionBar.addTab(mapTab);
         actionBar.addTab(timerTab);
         actionBar.addTab(stationTab);
+
 
         //actionBar.addTab(aboutTab);
 

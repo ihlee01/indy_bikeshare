@@ -158,7 +158,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             for(int j = 0 ; j < favorites.size(); j++) {
                 if(stations.get(i).getAddress().equals(favorites.get(j).getAddress())) {
                     stations.get(i).setFavorite(true);
-                    stations.get(i).getAddress();
                 }
             }
             searchList.add(stations.get(i).getAddress());
@@ -210,20 +209,24 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     }
     public List<Station> readObject(String key) {
         ByteArrayInputStream bais;
-        List<Station> result = null;
-        try {
-            String encodedString = mPrefs.getString(key, null);
-            byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
-            bais = new ByteArrayInputStream(input);
-            ois = new ObjectInputStream(bais);
+        List<Station> result = new ArrayList<Station>();
+        if (!mPrefs.getString(key, null).equals("initial")) {
+            try {
+                String encodedString = mPrefs.getString(key, null);
+                Log.e("", encodedString);
+                byte[] input = Base64.decode(encodedString, Base64.DEFAULT);
+                bais = new ByteArrayInputStream(input);
+                ois = new ObjectInputStream(bais);
 
-            result = (ArrayList<Station>)ois.readObject();
+                result = (ArrayList<Station>) ois.readObject();
 
-        }catch (IOException e) {
-            e.printStackTrace();
-        }catch(ClassNotFoundException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+
         return result;
     }
     public void storeObject(String key, List<Station> obj) {
