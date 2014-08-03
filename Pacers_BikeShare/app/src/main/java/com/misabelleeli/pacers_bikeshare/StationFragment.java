@@ -91,10 +91,10 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         defaultBackgroundView = (TextView) rootView.findViewById(R.id.defaultBackgroundView);
         swipe_layout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
         swipe_layout.setColorScheme(
-                R.color.blue,
-                android.R.color.holo_green_light,
+                android.R.color.holo_red_light,
                 android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+                android.R.color.holo_green_light,
+                R.color.blue);
         myListView = (ListView) rootView.findViewById(R.id.stationsListview);
         swipe_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -169,9 +169,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     private void generateList(ListView view) {
 
         //Update Favorites
-        for(int i = 0 ; i < favorites.size(); i++) {
-            Log.e("Before Generate", favorites.get(i).getAddress());
-        }
         for(int i = 0; i < stations.size(); i++) {
             for(int j = 0 ; j < favorites.size(); j++) {
                 if(stations.get(i).getAddress().equals(favorites.get(j).getAddress())) {
