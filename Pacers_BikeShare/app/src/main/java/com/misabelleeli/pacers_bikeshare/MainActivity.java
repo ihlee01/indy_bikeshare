@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -48,9 +49,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         aboutTab.setTabListener(this);
 
         actionBar.addTab(mapTab);
-        actionBar.addTab(stationTab);
         actionBar.addTab(timerTab);
-        actionBar.addTab(aboutTab);
+        actionBar.addTab(stationTab);
+
+        //actionBar.addTab(aboutTab);
 
         // on swiping the viewpager make respective tab selected
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -109,8 +111,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        menu.findItem(R.id.action_refresh).setVisible(false);
-        menu.findItem(R.id.action_settings).setVisible(false);
+        menu.findItem(R.id.action_settings).setVisible(true);
         return true;
     }
 
@@ -120,7 +121,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
+        if (id == R.id.action_settings) {
+            Intent i = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(i);
             return true;
         }
         return super.onOptionsItemSelected(item);

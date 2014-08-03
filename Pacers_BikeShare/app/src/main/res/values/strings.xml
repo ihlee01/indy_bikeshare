@@ -14,7 +14,7 @@
     <string name="how">How It Works</string>
     <string name="how_content">Indy\'s 250 gold bikes are available when you need them near your favorite spots, your office or neighborhood. Once you are done with your ride, simply dock your bike at any of the available stations.</string>
     <string name="checkout_content">
-        <![CDATA[
+<![CDATA[
         <b>1.</b> Press the kiosk button.<br/>
         <b>2.</b> Follow the instructions on the touchscreen to purchase a 24-Hour Pass.<br/>
         <b>3.</b> When prompted, enter the dock number of the bike you wish to check out.<br/>
@@ -22,7 +22,7 @@
         ]]>
     </string>
     <string name="checkout_content2">
-        <![CDATA[
+<![CDATA[
         <b>1.</b> Choose one of the locked Pacers Bikeshare bikes.<br/>
         <b>2.</b> Press the silver button on the bike’s dock. <br/>
         <b>3.</b> Touch your Membership card to the square behind the silver button.<br/>
@@ -30,7 +30,7 @@
         ]]>
     </string>
     <string name="checkout_content3">
-        <![CDATA[
+<![CDATA[
         <b>1.</b> Press the kiosk button.<br/>
         <b>2.</b> Follow the prompts on the touchscreen. When prompted, swipe the same credit card registered with your membership.<br/>
         <b>3.</b> When prompted, enter the dock number of the bike you wish to check out.<br/>
@@ -39,19 +39,19 @@
     </string>
     <string name="ride_content">You now have access to a Pacers Bikeshare bike for unlimited 30-minute trips for the duration of your Pass or Membership.\n\nThe 24-Hour Pass or Annual Membership includes the first 30-minutes of your ride for no additional charge.\n\nAdjust the seat, strap on your helmet and go! Enjoy riding your Pacers Bikeshare bike, and then check it back in at any station with an available dock when you are finished. </string>
     <string name="return_content">
-        <![CDATA[
+<![CDATA[
         <b>1.</b> Return your bike to any Pacers Bikeshare station by rolling it into an available dock.<br/>
         <b>2.</b> Wait for three rapid blinks of the green light and three quick beeps.<br/>
         <b>3.</b> Once you\'ve returned your Pacers Bikeshare bike at the station, feel free to check out another bike at any time throughout your Pass or Membership period using the same credit card or swipe your Membership card.
         ]]>
     </string>
     <string name="return_content2">
-        <![CDATA[
+<![CDATA[
         Your Pass or Membership includes <font color=\"red\">unlimited</font> check-outs!<br/>
         ]]>
     </string>
     <string name="map_link">
-        <![CDATA[
+<![CDATA[
         <a href=\"http://ftpcontent.worldnow.com/wthr/PDF/bikesharemap.pdf\">Download Station Location Map</a>
         ]]>
     </string>
@@ -68,4 +68,7 @@
     <string name="question6">What if I am involved in an accident?</string>
     <string name="answer6">If there has been an injury, please call 911 first. Contact Customer Service at (317) 653-1947 at the earliest appropriate time. If you are qualified to administer first aid and there is a need, please help out to the limit of your abilities. If appropriate, contact the police, as well. As in any accident, exchange information with any other affected party and collect contact information from witnesses.</string>
     <string name="search_hint">Search by name...</string>
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>
