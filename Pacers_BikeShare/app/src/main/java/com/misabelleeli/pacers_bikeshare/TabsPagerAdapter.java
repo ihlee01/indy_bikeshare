@@ -25,7 +25,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int index) {
-        if(index >= 0 && index<=3)
+        if(index >= 0 && index<=2)
         {
             return f.get(index);
         }

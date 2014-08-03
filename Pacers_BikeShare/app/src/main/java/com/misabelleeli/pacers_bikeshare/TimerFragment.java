@@ -40,9 +40,9 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     private String defaultHms = "30:00";
     private long delimiter = 10;
 
-    public  CounterClass timer;
+    public  static CounterClass timer;
     private NotificationCompat.Builder mBuilder;
-    private NotificationManager nManager;
+    public static NotificationManager nManager;
     private int requestID = 001;
     private boolean vibrate = false;
 

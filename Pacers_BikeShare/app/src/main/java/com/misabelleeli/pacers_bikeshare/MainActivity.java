@@ -98,6 +98,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     public void onClick(DialogInterface dialog,int id) {
                         // if this button is clicked, close
                         // current activity
+                        TimerFragment.timer.cancel();
+                        TimerFragment.nManager.cancelAll();
                         MainActivity.this.finish();
                     }
                 })
