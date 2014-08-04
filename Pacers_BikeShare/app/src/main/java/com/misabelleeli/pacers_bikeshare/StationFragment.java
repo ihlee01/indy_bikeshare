@@ -122,7 +122,11 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                                 myListView.setAdapter(swing);
                             }
                         } else {
-                            generateList(myListView);
+                            adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, stations);
+                            swing = new SwingBottomInAnimationAdapter(adapter);
+                            swing.setAbsListView(myListView);
+                            myListView.setAdapter(swing);
+                            myListView.setTextFilterEnabled(true);
                         }
                         swipe_layout.setRefreshing(false);
                     }
@@ -143,6 +147,9 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
                 if(!searchView.getText().toString().equals("")) {
                     adapter.getFilter().filter(charSequence.toString());
+                }
+                else {
+                    generateList(myListView);
                 }
             }
 
@@ -180,7 +187,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         stations.add(new Station("Athenaeum", "401 E. Michigan St", 12, 4, 93));
         stations.add(new Station("Monument Circle", "121 Monument Circle", 2, 8, 99));
         stations.add(new Station("Bankers Life Fieldhouse", "169 s. Pennsylvania St",6, 8, 30));
-        stations.add(new Station("City County Building", "200 E. Washington St", 1, 7, 25));
         stations.add(new Station("Fletcher Place", "531 Virginia Ave", 4, 8, 60));
         stations.add(new Station("Mass Ave/Alabama", "372 N. Alabama St", 5, 5, 14));
         stations.add(new Station("Fletcher Place", "749 Virginia Ave", 12, 2, 65));
@@ -199,7 +205,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 stations.get(i).setFavorite(false);
             }
             for(int j = 0 ; j < favorites.size(); j++) {
-                if(stations.get(i).getName().equals(favorites.get(j).getName())) {
+                if(stations.get(i).getAddress().equals(favorites.get(j).getAddress())) {
                     stations.get(i).setFavorite(true);
                     break;
                 }
@@ -210,9 +216,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         }
         defaultBackgroundView.setVisibility(View.GONE);
         adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, stations);
-        swing = new SwingBottomInAnimationAdapter(adapter);
-        swing.setAbsListView(view);
-        view.setAdapter(swing);
+        view.setAdapter(adapter);
         view.setTextFilterEnabled(true);
     }
 
@@ -363,7 +367,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 public void onClick(View view) {
                     int position = (Integer) favorite_button.getTag();
                     favorites = readObject("favorites");
-                    Station curStation = original_list.get(position);
+                    Station curStation = list.get(position);
                     if (curStation.getFavorite()) {
                         curStation.setFavorite(false);
                         favorite_button.setBackgroundResource(R.drawable.unfavorite);
@@ -411,7 +415,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 else {
                     List<Station> result = new ArrayList<Station>();
                     for (Station station : original_list) {
-                        if(station.getName().toLowerCase().contains(charSequence)) {
+                        if(station.getAddress().toLowerCase().contains(charSequence)) {
                             result.add(station);
                         }
                     }
