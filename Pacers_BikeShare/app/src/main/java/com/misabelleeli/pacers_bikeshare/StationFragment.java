@@ -2,6 +2,7 @@ package com.misabelleeli.pacers_bikeshare;
 
 
 
+import android.app.ActionBar;
 import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,7 +30,9 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -116,13 +119,13 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                             else {
                                 //sort by distance
                                 Collections.sort(favorites);
-                                adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, favorites);
+                                adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, favorites);
                                 swing = new SwingBottomInAnimationAdapter(adapter);
                                 swing.setAbsListView(myListView);
                                 myListView.setAdapter(swing);
                             }
                         } else {
-                            adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, stations);
+                            adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, stations);
                             swing = new SwingBottomInAnimationAdapter(adapter);
                             swing.setAbsListView(myListView);
                             myListView.setAdapter(swing);
@@ -133,7 +136,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 }, 2000);
             }
         });
-        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, stations);
+        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, stations);
 
         generateList(myListView);
 
@@ -215,7 +218,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             }
         }
         defaultBackgroundView.setVisibility(View.GONE);
-        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, stations);
+        adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, stations);
         view.setAdapter(adapter);
         view.setTextFilterEnabled(true);
     }
@@ -231,7 +234,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             }
             //sort by distance
             Collections.sort(favorites);
-            adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view2, favorites);
+            adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, favorites);
             swing = new SwingBottomInAnimationAdapter(adapter);
             swing.setAbsListView(myListView);
             myListView.setAdapter(swing);
@@ -305,7 +308,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             View rowView = convertView;
             if (rowView == null) {
                 LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = inflater.inflate(R.layout.station_view2, parent, false);
+                rowView = inflater.inflate(R.layout.station_view3, parent, false);
             }
             Station curStation = list.get(position);
             TextView station_name = (TextView)rowView.findViewById(R.id.station_name);
@@ -316,7 +319,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             TextView status_view = (TextView)rowView.findViewById(R.id.status_view);
             TextView distance_view = (TextView)rowView.findViewById(R.id.distance_view);
             final ImageButton favorite_button = (ImageButton)rowView.findViewById(R.id.favorite_button);
-            ImageView icon_view = (ImageView)rowView.findViewById(R.id.bike_icon);
+            ImageView bike_avail = (ImageView)rowView.findViewById(R.id.bike_avail);
+            ImageView dock_avail = (ImageView)rowView.findViewById(R.id.dock_avail);
 
             //Station name
             station_name.setText(curStation.getName());
@@ -330,6 +334,11 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             //Station Docks
             station_docks.setText(curStation.getDocks()+"");
 
+            float totalBike = curStation.getBikes() + curStation.getDocks();
+            float bike_ratio = (curStation.getBikes()/totalBike*100);
+            float dock_ratio = 100 - bike_ratio;
+            bike_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, bike_ratio));
+            dock_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, dock_ratio));
 
             /*String status = "Bikes: <b><font color=\"#0075B0\">" + curStation.getBikes() + "</font></b> | Docks: <b><font color=\"#E05206\">" + curStation.getDocks()+"</font></b>";
             status_view.setText(Html.fromHtml(status));
