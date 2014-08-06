@@ -103,7 +103,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         // if this button is clicked, close
                         // current activity
                         TimerFragment.timer.cancel();
-                        TimerFragment.nManager.cancelAll();
+                        if(TimerFragment.nManager != null) {
+                            TimerFragment.nManager.cancelAll();
+                        }
                         MainActivity.this.finish();
                     }
                 })
