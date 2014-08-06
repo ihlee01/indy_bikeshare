@@ -77,14 +77,15 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     public void addTime()
     {
         timer.cancel();
+        startTime = defaultTime*2;
         stopButton.setVisibility(View.GONE);
         startButton.setVisibility(View.VISIBLE);
-        startTime = defaultTime*2;
-        timer = new CounterClass(startTime, 1000,(TimerCountDown)TimerFragment.this);
         delimiter = 10;
         defaultHms = "60:00";
         hms = defaultHms;
+        timer = new CounterClass(startTime, 1000, (TimerCountDown) TimerFragment.this);
         timerValue.setText(hms);
+
     }
     public void minusTime()
     {
