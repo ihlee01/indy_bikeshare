@@ -86,6 +86,12 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         timer = new CounterClass(startTime, 1000, (TimerCountDown) TimerFragment.this);
         timerValue.setText(hms);
 
+        if(mBuilder != null)
+        {
+            mBuilder.setContentText("Time " + hms);
+            nManager.notify(0, mBuilder.build());
+        }
+
     }
     public void minusTime()
     {
@@ -98,6 +104,12 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         defaultHms = "30:00";
         hms = defaultHms;
         timerValue.setText(hms);
+
+        if(mBuilder != null)
+        {
+            mBuilder.setContentText("Time " + hms);
+            nManager.notify(0, mBuilder.build());
+        }
     }
 
     @Override
