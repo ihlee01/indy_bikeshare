@@ -340,26 +340,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             bike_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, bike_ratio));
             dock_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, dock_ratio));
 
-            /*String status = "Bikes: <b><font color=\"#0075B0\">" + curStation.getBikes() + "</font></b> | Docks: <b><font color=\"#E05206\">" + curStation.getDocks()+"</font></b>";
-            status_view.setText(Html.fromHtml(status));
 
-
-            //Icon setting
-            float totalBike = curStation.getBikes() + curStation.getDocks();
-            double bike_ratio =Math.floor(curStation.getBikes()/totalBike*100);
-            if(bike_ratio == 0) {
-                icon_view.setImageResource(R.drawable.bike_icon_empty);
-            }
-            else if(bike_ratio < 33.3) {
-                icon_view.setImageResource(R.drawable.bike_icon_green_1);
-            }
-            else if(bike_ratio < 66.6) {
-                icon_view.setImageResource(R.drawable.bike_icon_green_2);
-            }
-            else {
-                icon_view.setImageResource(R.drawable.bike_icon_full);
-            }
-            */
             distance_view.setText(curStation.getDistance() + " mi");
 
             if(curStation.getFavorite()) {
