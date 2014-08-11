@@ -51,8 +51,13 @@
         ]]>
     </string>
     <string name="map_link">
-<![CDATA[
+        <![CDATA[
         <a href=\"http://ftpcontent.worldnow.com/wthr/PDF/bikesharemap.pdf\">Download Station Location Map</a>
+        ]]>
+    </string>
+    <string name="api_content">
+        <![CDATA[
+        Powered by B-cycle and Pacers Bikeshare<br>To sign up, go to<br><a href=\"http://www.bcycle.com\">www.bcycle.com</a><br>or<br><a href=\"http://www.pacersbikeshare.org\">www.pacersbikeshare.org</a><br>This is a third party ap not affiliated with B-cycle.
         ]]>
     </string>
     <string name="question1">Is it legal to ride a bike without a helmet?</string>

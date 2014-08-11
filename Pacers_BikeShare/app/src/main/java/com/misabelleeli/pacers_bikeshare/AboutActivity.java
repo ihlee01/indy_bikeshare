@@ -22,6 +22,7 @@ public class AboutActivity extends Activity {
         TextView return_content = (TextView)findViewById(R.id.return_content);
         TextView return_content2 = (TextView)findViewById(R.id.return_content2);
         TextView map_link = (TextView)findViewById(R.id.map_link);
+        TextView api_content = (TextView)findViewById(R.id.api_content);
 
         checkout_content.setText(Html.fromHtml(getResources().getString(R.string.checkout_content)));
         checkout_content2.setText(Html.fromHtml(getResources().getString(R.string.checkout_content2)));
@@ -30,6 +31,8 @@ public class AboutActivity extends Activity {
         return_content2.setText(Html.fromHtml(getResources().getString(R.string.return_content2)));
         map_link.setText(Html.fromHtml(getResources().getString(R.string.map_link)));
         map_link.setMovementMethod(LinkMovementMethod.getInstance());
+        api_content.setText(Html.fromHtml(getResources().getString(R.string.api_content)));
+        api_content.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 
