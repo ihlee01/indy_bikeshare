@@ -123,6 +123,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                                 swing = new SwingBottomInAnimationAdapter(adapter);
                                 swing.setAbsListView(myListView);
                                 myListView.setAdapter(swing);
+                                myListView.setTextFilterEnabled(true);
                             }
                         } else {
                             adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, stations);
@@ -240,7 +241,12 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             myListView.setAdapter(swing);
         }
         else {
-            generateList(myListView);
+            defaultBackgroundView.setVisibility(View.GONE);
+            adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, stations);
+            swing = new SwingBottomInAnimationAdapter(adapter);
+            swing.setAbsListView(myListView);
+            myListView.setAdapter(swing);
+            myListView.setTextFilterEnabled(true);
         }
     }
     public List<Station> readObject(String key) {

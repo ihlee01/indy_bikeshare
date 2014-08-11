@@ -208,7 +208,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
 
         mBuilder = new NotificationCompat.Builder(
                 getActivity()).setSmallIcon(R.drawable.ic_launcher);
-        mBuilder.setContentTitle("Pacers Bike Share Timer");
+        mBuilder.setContentTitle("Pacers Bikeshare Timer");
         //.setStyle(new NotificationCompat.BigTextStyle().bigText(hms));
         mBuilder.setAutoCancel(true).setPriority(2);
         mBuilder.setContentText("Time " + hms);
