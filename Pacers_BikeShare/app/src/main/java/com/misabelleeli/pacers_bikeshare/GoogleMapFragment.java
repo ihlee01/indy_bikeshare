@@ -110,10 +110,18 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
         for(int i = 0; i < title.length;i++)
         {
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(latitudes[i], longtitudes[i]))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)))
-                    .setTitle(title[i]);
+            if(i%2==0) {
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(latitudes[i], longtitudes[i]))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher_grey)))
+                        .setTitle(title[i]);
+            }
+            else {
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(latitudes[i], longtitudes[i]))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)))
+                        .setTitle(title[i]);
+            }
         }
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
