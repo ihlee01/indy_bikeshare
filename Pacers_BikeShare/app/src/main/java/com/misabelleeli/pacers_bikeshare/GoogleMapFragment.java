@@ -4,34 +4,44 @@ package com.misabelleeli.pacers_bikeshare;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Criteria;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.List;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 
 /**
@@ -74,6 +84,80 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     }
 
 
+    public void getJSON()
+    {
+        new JSONParser().execute();
+    }
+
+    private class JSONParser extends AsyncTask<String, String, JSONObject> {
+
+        String apiKey = "CDF97241-9E01-4C18-AEA9-1DBA42651EA8";
+        JSONArray user = null;
+
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            String url = "https://publicapi.bcycle.com" +
+                    "/api/1.0/ListProgramKiosks/75";
+            JSONParser jParser = new JSONParser();
+            JSONObject json = jParser.getJSONFromUrl(url);
+            return json;
+        }
+
+        protected void onPostExecute(JSONObject json){
+            try{
+                user = json.getJSONArray(apiKey);
+                JSONObject c = user.getJSONObject(0);
+                Log.d("Test",c.getString("Id"));
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        public JSONObject getJSONFromUrl(String url) {
+            InputStream is = null;
+            JSONObject jObj = null;
+            String json = "";
+            // Making HTTP request
+            try {
+                // defaultHttpClient
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost(url);
+                HttpResponse httpResponse = httpClient.execute(httpPost);
+                HttpEntity httpEntity = httpResponse.getEntity();
+                is = httpEntity.getContent();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        is, "iso-8859-1"), 8);
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "n");
+                }
+                is.close();
+                json = sb.toString();
+            } catch (Exception e) {
+                Log.e("Buffer Error", "Error converting result " + e.toString());
+            }
+            // try parse the string to a JSON object
+            try {
+                jObj = new JSONObject(json);
+            } catch (JSONException e) {
+                Log.e("JSON Parser", "Error parsing data " + e.toString());
+            }
+            // return JSON String
+            return jObj;
+        }
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,6 +171,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         super.onViewCreated(view, savedInstanceState);
         //mLocationClient = new LocationClient(this,this,this);
 
+        getJSON();
         mMap = getMap();
 
         /*
