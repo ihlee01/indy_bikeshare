@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,25 +25,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 
 /**
@@ -62,6 +44,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     private double currentLong;
 
     private LayoutInflater Minflater;
+
+    /*
     private double []latitudes = {39.76737,39.77224,39.77643,39.77475,39.77418,39.76885,
             39.78179,39.77964,39.77564,39.76595,39.76702,39.76720,39.76832,
             39.77338,39.77669,39.75241,39.75740,39.75893,39.76423,39.76593,
@@ -81,19 +65,23 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             "Convention Center - Maryland and Capitol", "City Market",
             "City County Building","Central Library", "Bankers Life Fieldhouse",
             "Athenaeum"};
+    */
 
-    private static final String TAG_ID = "Id";
-    ArrayList<HashMap<String, String>> bikeInfoList;
+    private final String TAG_LOC = "Location";
+    private final String TAG_Name = "Name";
+    private final String TAG_ADDR = "Address";
+    private final String TAG_Bikes = "BikesAvailable";
+    private final String TAG_Docks = "DocksAvailable";
+    private final String TAG_TotalDocks = "TotalDocks";
     String url = "https://publicapi.bcycle.com" +
             "/api/1.0/ListProgramKiosks/75";
-    String apiKey = "CDF97241-9E01-4C18-AEA9-1DBA42651EA8";
 
     public GoogleMapFragment() {
         // Required empty public constructor
     }
 
 
-    public void getJSON()
+    public void getData()
     {
 
         new JSONParser().execute();
@@ -101,27 +89,49 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private class JSONParser extends AsyncTask<Void, Void, Void> {
 
+        private String[] lat = new String[25];
+        private String[] lon = new String[25];
+        private String[] stationName = new String[25];
+        private String[] street = new String[25];
+
+
+        //You get Data here
         @Override
         protected Void doInBackground(Void... voids) {
             com.misabelleeli.pacers_bikeshare.JSONParser jp =
                     new com.misabelleeli.pacers_bikeshare.JSONParser();
 
-
-            JSONArray bikesInfo = jp.getJSONFromUrl(url);
-            String res = "";
-
-            if(bikesInfo != null)
+            JSONArray bk = jp.getJSONFromUrl(url);
+            if(bk != null)
             {
                 try{
+                    int temp = bk.length();
 
-                    //Loop to go through the JSONArray
-                    for(int i = 0; i < bikesInfo.length(); i++)
+                    for(int i = 0; i < bk.length(); i++)
                     {
-                        JSONObject bike = bikesInfo.getJSONObject(i);
+                        JSONObject bike = bk.getJSONObject(i);
 
                         //Get the necessary values needed here
-                        String id = bike.getString(TAG_ID);
-                        Log.e("ID: ", id);
+                        JSONObject loc = bike.getJSONObject(TAG_LOC);
+                        String latitude = loc.getString("Latitude");
+                        String longitude = loc.getString("Longitude");
+
+                        JSONObject addr = bike.getJSONObject(TAG_ADDR);
+                        String streetName = addr.getString("Street");
+
+                        String title = bike.getString(TAG_Name);
+
+                        String bikesAvail = bike.getString(TAG_Bikes);
+                        String docksAvail = bike.getString(TAG_Docks);
+                        String totalDocks = bike.getString(TAG_TotalDocks);
+
+                        lat[i] = latitude;
+                        lon[i] = longitude;
+                        street[i] = "\n"+ TAG_Bikes+": "+bikesAvail
+                                + "\n" + TAG_Docks+": "+ docksAvail
+                                + "\n" + TAG_TotalDocks+": "+ totalDocks;
+                        stationName[i] = title;
+
                     }
 
                 }catch(Exception e){
@@ -131,7 +141,24 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             else{
                 Log.e("JSONParser", "Error, no data");
             }
+
             return null;
+        }
+
+        //Update GUI here
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            super.onPostExecute(result);
+
+            for(int i = 0; i < lat.length; i++) {
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(lat[i]), Double.parseDouble(lon[i])))
+                        .title(stationName[i])
+                        .snippet(street[i])
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
+            }
+
         }
     }
 
@@ -147,37 +174,17 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        bikeInfoList = new ArrayList<HashMap<String, String>>();
-
-        getJSON();
         mMap = getMap();
-
-        /*
-        CameraPosition.Builder cameraPositionBuilder = new CameraPosition.Builder();
-        cameraPositionBuilder.target(new LatLng(39.773914,-86.157555));
-        cameraPositionBuilder.zoom((float) 15);
-        mMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(cameraPositionBuilder.build()));
-        */
 
         mMap.setMyLocationEnabled(true);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                 MIN_TIME,MIN_DISTANCE,this);
 
-        /*Once there is a database access implement the following:
-            1. If docks are full, have marker color change.
-            2. If dock is about to be full, have another maker color change.
-        */
-
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
-        for(int i = 0; i < title.length;i++)
-        {
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(latitudes[i], longtitudes[i]))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)))
-                    .setTitle(title[i]);
-        }
+
+        getData();
+
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
@@ -189,6 +196,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                 startActivity(intent);
             }
         });
+
     }
 
     @Override
@@ -232,6 +240,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             // Getting the position from the marker
             LatLng latLng = marker.getPosition();
             String name = marker.getTitle();
+            String desp = marker.getSnippet();
+
             // Getting reference to the TextView to set latitude
             TextView title = (TextView) v.findViewById(R.id.title);
 
@@ -243,7 +253,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
             title.setText(name);
 
-            description.setText("Click for Directions.");
+            description.setText(desp+"\n\nClick for Directions.");
 
             // Returning the view containing InfoWindow contents
             return v;
