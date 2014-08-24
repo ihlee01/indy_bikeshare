@@ -2,28 +2,20 @@ package com.misabelleeli.pacers_bikeshare;
 
 
 
-import android.app.ActionBar;
-import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -32,18 +24,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,15 +35,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class StationFragment extends Fragment implements CompoundButton.OnCheckedChangeListener{
     private static List<Station> stations = new ArrayList<Station>();
+    private static List<String> stationNamesList = new ArrayList<String>();
     private List<Station> favorites = new ArrayList<Station>();
     private SwingBottomInAnimationAdapter swing;
     private ArrayAdapter<Station> adapter;
@@ -187,8 +169,14 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
 
     public static void populateStations(String stationName, String addr, int bike, int dock, float miles) {
 
-        stations.add(new Station(stationName, addr, bike, dock, miles));
+        if(stationNamesList.contains(stationName))
+        {
 
+        }
+        else {
+            stationNamesList.add(stationName);
+            stations.add(new Station(stationName, addr, bike, dock, miles));
+        }
         /*
         stations.add(new Station("IUPUI Campus Center", "401 Univesity Blvd", 7, 9, 4));
         stations.add(new Station("North End of Canal", "1325 Canal Walk", 7, 4, 8));
