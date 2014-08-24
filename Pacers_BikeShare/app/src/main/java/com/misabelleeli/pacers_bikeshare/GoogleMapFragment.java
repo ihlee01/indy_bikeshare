@@ -99,7 +99,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         private String[] street = new String[numStations];
         private String[] docks = new String[numStations];
         private String[] bikesAv = new String[numStations];
-        private String[] miles = new String[numStations];
+        private float[] miles = new float[numStations];
         private String[] streetNameOnly = new String[numStations];
 
         //You get Data here
@@ -142,6 +142,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         streetNameOnly[i] = streetName;
 
                         Location myLoc = new Location("a");
+                        //myLat = 39.76789474;
+                        //myLong = -86.15843964;
                         myLoc.setLatitude(myLat);
                         myLoc.setLongitude(myLong);
 
@@ -149,8 +151,9 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         stationLoc.setLatitude(Double.parseDouble(latitude));
                         stationLoc.setLongitude(Double.parseDouble(longitude));
 
-                        float tempMiles = myLoc.distanceTo(stationLoc)* Float.parseFloat("0.000621371");
-                        miles[i] = String.format("%.1f", tempMiles);
+                        String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc)* Float.parseFloat("0.000621371"));
+                        //miles[i] = String.format("%.1f", tempMiles);
+                        miles[i] = Float.parseFloat(tempMiles);
                     }
 
                 }catch(Exception e){
@@ -190,7 +193,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         .icon(BitmapDescriptorFactory.fromResource(imgName)));
 
                 StationFragment.populateStations(stationName[i], streetNameOnly[i],
-                        Integer.parseInt(bikesAv[i]),Integer.parseInt(docks[i]),Float.parseFloat(miles[i]));
+                        Integer.parseInt(bikesAv[i]),Integer.parseInt(docks[i]),miles[i]);
 
             }
         }
