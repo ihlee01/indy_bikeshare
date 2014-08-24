@@ -37,7 +37,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -53,7 +59,7 @@ import java.util.Map;
 
 
 public class StationFragment extends Fragment implements CompoundButton.OnCheckedChangeListener{
-    private List<Station> stations = new ArrayList<Station>();
+    private static List<Station> stations = new ArrayList<Station>();
     private List<Station> favorites = new ArrayList<Station>();
     private SwingBottomInAnimationAdapter swing;
     private ArrayAdapter<Station> adapter;
@@ -68,6 +74,14 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
 
     private View rootView;
 
+    private final String TAG_LOC = "Location";
+    private final String TAG_Name = "Name";
+    private final String TAG_ADDR = "Address";
+    private final String TAG_Bikes = "BikesAvailable";
+    private final String TAG_Docks = "DocksAvailable";
+    private final String TAG_TotalDocks = "TotalDocks";
+    String url = "https://publicapi.bcycle.com" +
+            "/api/1.0/ListProgramKiosks/75";
 
     public StationFragment() {
         // Required empty public constructor
@@ -83,7 +97,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
 
         if(stations.size() == 0)
         {
-            populateStations();
+            //getData();
         }
 
         //Ascending order by distance.
@@ -171,8 +185,11 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void populateStations() {
+    public static void populateStations(String stationName, String addr, int bike, int dock, int miles) {
 
+        stations.add(new Station(stationName, addr, bike, dock, miles));
+
+        /*
         stations.add(new Station("IUPUI Campus Center", "401 Univesity Blvd", 7, 9, 4));
         stations.add(new Station("North End of Canal", "1325 Canal Walk", 7, 4, 8));
         stations.add(new Station("Michigan/Blackford", "525 N. Blackford St", 12, 4, 12));
@@ -198,7 +215,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         stations.add(new Station("North Mass Ave", "949 Mass Ave", 5, 9, 85));
         stations.add(new Station("Fountain Square", "1066 Virginia Ave", 12, 2, 95));
 
-
+        */
     }
     private void generateList(ListView view) {
 

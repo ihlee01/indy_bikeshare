@@ -89,11 +89,14 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private class JSONParser extends AsyncTask<Void, Void, Void> {
 
-        private String[] lat = new String[25];
-        private String[] lon = new String[25];
-        private String[] stationName = new String[25];
-        private String[] street = new String[25];
-
+        private String[] lat = new String[50];
+        private String[] lon = new String[50];
+        private String[] stationName = new String[50];
+        private String[] street = new String[50];
+        private String[] docks = new String[50];
+        private String[] bikesAv = new String[50];
+        private int[] miles = new int[50];
+        private String[] streetNameOnly = new String[50];
 
         //You get Data here
         @Override
@@ -110,7 +113,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                     for(int i = 0; i < bk.length(); i++)
                     {
                         JSONObject bike = bk.getJSONObject(i);
-
                         //Get the necessary values needed here
                         JSONObject loc = bike.getJSONObject(TAG_LOC);
                         String latitude = loc.getString("Latitude");
@@ -131,7 +133,10 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                                 + "\n" + TAG_Docks+": "+ docksAvail
                                 + "\n" + TAG_TotalDocks+": "+ totalDocks;
                         stationName[i] = title;
-
+                        docks[i] = docksAvail;
+                        bikesAv[i] = bikesAvail;
+                        miles[i] = 0;
+                        streetNameOnly[i] = streetName;
                     }
 
                 }catch(Exception e){
@@ -151,14 +156,32 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         {
             super.onPostExecute(result);
 
+            int imgName = 0;
+
+
             for(int i = 0; i < lat.length; i++) {
+
+                if(lat[i] == null)
+                {
+                    break;
+                }
+                if(docks[i].equals("0"))
+                {
+                    imgName = R.drawable.ic_launcher_grey;
+                }
+                else
+                {
+                    imgName = R.drawable.ic_launcher;
+                }
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(lat[i]), Double.parseDouble(lon[i])))
                         .title(stationName[i])
                         .snippet(street[i])
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
-            }
+                        .icon(BitmapDescriptorFactory.fromResource(imgName)));
 
+                StationFragment.populateStations(stationName[i], streetNameOnly[i],Integer.parseInt(bikesAv[i]),Integer.parseInt(docks[i]),miles[i]);
+
+            }
         }
     }
 
@@ -184,8 +207,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
         getData();
-
-
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
