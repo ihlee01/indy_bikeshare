@@ -4,6 +4,7 @@ package com.misabelleeli.pacers_bikeshare;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,6 +43,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private double currentLat;
     private double currentLong;
+    private double myLat;
+    private double myLong;
 
     private LayoutInflater Minflater;
 
@@ -89,14 +92,15 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private class JSONParser extends AsyncTask<Void, Void, Void> {
 
-        private String[] lat = new String[50];
-        private String[] lon = new String[50];
-        private String[] stationName = new String[50];
-        private String[] street = new String[50];
-        private String[] docks = new String[50];
-        private String[] bikesAv = new String[50];
-        private int[] miles = new int[50];
-        private String[] streetNameOnly = new String[50];
+        private int numStations = 25;
+        private String[] lat = new String[numStations];
+        private String[] lon = new String[numStations];
+        private String[] stationName = new String[numStations];
+        private String[] street = new String[numStations];
+        private String[] docks = new String[numStations];
+        private String[] bikesAv = new String[numStations];
+        private String[] miles = new String[numStations];
+        private String[] streetNameOnly = new String[numStations];
 
         //You get Data here
         @Override
@@ -135,8 +139,18 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         stationName[i] = title;
                         docks[i] = docksAvail;
                         bikesAv[i] = bikesAvail;
-                        miles[i] = 0;
                         streetNameOnly[i] = streetName;
+
+                        Location myLoc = new Location("a");
+                        myLoc.setLatitude(myLat);
+                        myLoc.setLongitude(myLong);
+
+                        Location stationLoc = new Location("b");
+                        stationLoc.setLatitude(Double.parseDouble(latitude));
+                        stationLoc.setLongitude(Double.parseDouble(longitude));
+
+                        float tempMiles = myLoc.distanceTo(stationLoc)* Float.parseFloat("0.000621371");
+                        miles[i] = String.format("%.1f", tempMiles);
                     }
 
                 }catch(Exception e){
@@ -159,12 +173,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             int imgName = 0;
 
 
-            for(int i = 0; i < lat.length; i++) {
+            for(int i = 0; i < numStations; i++) {
 
-                if(lat[i] == null)
-                {
-                    break;
-                }
                 if(docks[i].equals("0"))
                 {
                     imgName = R.drawable.ic_launcher_grey;
@@ -179,7 +189,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         .snippet(street[i])
                         .icon(BitmapDescriptorFactory.fromResource(imgName)));
 
-                StationFragment.populateStations(stationName[i], streetNameOnly[i],Integer.parseInt(bikesAv[i]),Integer.parseInt(docks[i]),miles[i]);
+                StationFragment.populateStations(stationName[i], streetNameOnly[i],
+                        Integer.parseInt(bikesAv[i]),Integer.parseInt(docks[i]),Float.parseFloat(miles[i]));
 
             }
         }
@@ -222,7 +233,9 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        myLat = location.getLatitude();
+        myLong = location.getLongitude();
+        LatLng latLng = new LatLng(myLat,myLong);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
         mMap.animateCamera(cameraUpdate);
         locationManager.removeUpdates(this);

@@ -185,7 +185,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         super.onViewCreated(view, savedInstanceState);
     }
 
-    public static void populateStations(String stationName, String addr, int bike, int dock, int miles) {
+    public static void populateStations(String stationName, String addr, int bike, int dock, float miles) {
 
         stations.add(new Station(stationName, addr, bike, dock, miles));
 
