@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,6 +43,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -79,6 +82,12 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             "City County Building","Central Library", "Bankers Life Fieldhouse",
             "Athenaeum"};
 
+    private static final String TAG_ID = "Id";
+    ArrayList<HashMap<String, String>> bikeInfoList;
+    String url = "https://publicapi.bcycle.com" +
+            "/api/1.0/ListProgramKiosks/75";
+    String apiKey = "CDF97241-9E01-4C18-AEA9-1DBA42651EA8";
+
     public GoogleMapFragment() {
         // Required empty public constructor
     }
@@ -86,36 +95,46 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     public void getJSON()
     {
+
         new JSONParser().execute();
     }
 
-    private class JSONParser extends AsyncTask<String, String, JSONObject> {
-        String url = "https://publicapi.bcycle.com" +
-                "/api/1.0/ListProgramKiosks/75";
-        String apiKey = "CDF97241-9E01-4C18-AEA9-1DBA42651EA8";
-        JSONArray user = null;
+    private class JSONParser extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected JSONObject doInBackground(String... strings) {
-            com.misabelleeli.pacers_bikeshare.JSONParser jParser =
+        protected Void doInBackground(Void... voids) {
+            com.misabelleeli.pacers_bikeshare.JSONParser jp =
                     new com.misabelleeli.pacers_bikeshare.JSONParser();
-            JSONObject json = jParser.getJSONFromUrl(url);
-            return json;
-        }
 
-        protected void onPostExecute(JSONObject json){
-            try{
-                user = json.getJSONArray(apiKey);
-                JSONObject c = user.getJSONObject(0);
-                Log.d("Test",c.getString("Id"));
-            }
-            catch(Exception e)
+
+            JSONArray bikesInfo = jp.getJSONFromUrl(url);
+            String res = "";
+
+            if(bikesInfo != null)
             {
-                e.printStackTrace();
-            }
-        }
+                try{
 
+                    //Loop to go through the JSONArray
+                    for(int i = 0; i < bikesInfo.length(); i++)
+                    {
+                        JSONObject bike = bikesInfo.getJSONObject(i);
+
+                        //Get the necessary values needed here
+                        String id = bike.getString(TAG_ID);
+                        Log.e("ID: ", id);
+                    }
+
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+            else{
+                Log.e("JSONParser", "Error, no data");
+            }
+            return null;
+        }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -128,7 +147,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //mLocationClient = new LocationClient(this,this,this);
+        bikeInfoList = new ArrayList<HashMap<String, String>>();
 
         getJSON();
         mMap = getMap();
