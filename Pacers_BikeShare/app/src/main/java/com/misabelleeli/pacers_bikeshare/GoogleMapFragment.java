@@ -272,8 +272,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             // Getting view from the layout file info_window_layout
             View v = Minflater.inflate(R.layout.custom_infowindow, null);
 
-            //TODO: get correct titles and descriptions.
-
             // Getting the position from the marker
             LatLng latLng = marker.getPosition();
             String name = marker.getTitle();
