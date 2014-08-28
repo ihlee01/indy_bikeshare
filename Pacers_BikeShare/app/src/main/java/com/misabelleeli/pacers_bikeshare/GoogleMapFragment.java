@@ -197,6 +197,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
             }
         }
+
     }
 
 
