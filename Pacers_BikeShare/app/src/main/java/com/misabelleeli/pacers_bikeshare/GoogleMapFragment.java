@@ -29,6 +29,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -90,7 +92,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         new JSONParser().execute();
     }
 
-    private class JSONParser extends AsyncTask<Void, Void, Void> {
+    private class JSONParser extends AsyncTask<Void, String, Void> {
 
         private int numStations = 25;
         private String[] lat = new String[numStations];
@@ -102,11 +104,17 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         private float[] miles = new float[numStations];
         private String[] streetNameOnly = new String[numStations];
 
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
+
         //You get Data here
         @Override
         protected Void doInBackground(Void... voids) {
             com.misabelleeli.pacers_bikeshare.JSONParser jp =
                     new com.misabelleeli.pacers_bikeshare.JSONParser();
+
 
             JSONArray bk = jp.getJSONFromUrl(url);
             if(bk != null)
@@ -117,6 +125,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                     for(int i = 0; i < bk.length(); i++)
                     {
                         JSONObject bike = bk.getJSONObject(i);
+
                         //Get the necessary values needed here
                         JSONObject loc = bike.getJSONObject(TAG_LOC);
                         String latitude = loc.getString("Latitude");
@@ -154,6 +163,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc)* Float.parseFloat("0.000621371"));
                         //miles[i] = String.format("%.1f", tempMiles);
                         miles[i] = Float.parseFloat(tempMiles);
+                        publishProgress(street[i]);
                     }
 
                 }catch(Exception e){
@@ -172,9 +182,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         protected void onPostExecute(Void result)
         {
             super.onPostExecute(result);
-
             int imgName = 0;
-
 
             for(int i = 0; i < numStations; i++) {
 
@@ -222,6 +230,14 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
         getData();
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                updateMarkerSnippet(marker);
+                return false;
+            }
+        });
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -233,6 +249,74 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             }
         });
 
+    }
+
+    private void updateMarkerSnippet(final Marker marker) {
+        final String markerTitle = marker.getTitle();
+
+        AsyncTask<Void, Void, Void> update = new AsyncTask<Void, Void, Void>() {
+            private String street = "";
+            private int docks = 0;
+            //You get Data here
+            @Override
+            protected Void doInBackground(Void... voids) {
+                com.misabelleeli.pacers_bikeshare.JSONParser jp =
+                        new com.misabelleeli.pacers_bikeshare.JSONParser();
+
+                JSONArray bk = jp.getJSONFromUrl(url);
+                if(bk != null)
+                {
+                    try{
+                        for(int i = 0; i < bk.length(); i++)
+                        {
+                            JSONObject bike = bk.getJSONObject(i);
+
+                            String title = bike.getString(TAG_Name);
+
+                            if(title.equals(markerTitle)) {
+                                String bikesAvail = bike.getString(TAG_Bikes);
+                                String docksAvail = bike.getString(TAG_Docks);
+                                String totalDocks = bike.getString(TAG_TotalDocks);
+
+                                docks = Integer.parseInt(docksAvail);
+                                street = "\n" + TAG_Bikes + ": " + bikesAvail
+                                        + "\n" + TAG_Docks + ": " + docksAvail
+                                        + "\n" + TAG_TotalDocks + ": " + totalDocks;
+                                break;
+                            }
+                        }
+
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Log.e("MarkerUpdate", "Error, no data");
+                }
+
+                return null;
+            }
+
+            //Update GUI here
+            @Override
+            protected void onPostExecute(Void result)
+            {
+                super.onPostExecute(result);
+                int imgName = 0;
+                if(docks == 0)
+                {
+                    imgName = R.drawable.ic_launcher_grey;
+                }
+                else
+                {
+                    imgName = R.drawable.ic_launcher;
+                }
+                marker.setIcon(BitmapDescriptorFactory.fromResource(imgName));
+                marker.setSnippet(street+"\nUpdated");
+                marker.showInfoWindow();
+            }
+        };
+        update.execute((Void[]) null);
     }
 
     @Override

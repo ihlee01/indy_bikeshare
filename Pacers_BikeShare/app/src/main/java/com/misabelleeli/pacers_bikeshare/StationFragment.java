@@ -171,7 +171,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
 
         if(stationNamesList.contains(stationName))
         {
-
         }
         else {
             stationNamesList.add(stationName);

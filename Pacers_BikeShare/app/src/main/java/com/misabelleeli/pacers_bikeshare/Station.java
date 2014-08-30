@@ -6,6 +6,8 @@ import java.io.Serializable;
  * Created by Lee on 2014-07-14.
  */
 public class Station implements Comparable<Station>, Serializable {
+    private double lat;
+    private double lon;
     private String name;
     private String address;
     private int bikes;
@@ -42,10 +44,18 @@ public class Station implements Comparable<Station>, Serializable {
         this.favorite = favorite;
     }
 
+    public void setLat(double lat){this.lat = lat;}
+
+    public void setLon(double lon) {this.lon = lon;}
+
     public int getBikes() {
 
         return bikes;
     }
+
+    public double getLat(){return lat;}
+
+    public double getLon() {return lon;}
 
     public int getDocks() {
         return docks;

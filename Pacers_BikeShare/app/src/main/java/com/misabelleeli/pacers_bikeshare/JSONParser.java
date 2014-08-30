@@ -76,7 +76,6 @@ public class JSONParser {
             is.close();
             result = sb.toString();
             jArray = new JSONArray(result);
-            //response = EntityUtils.toString(httpEntity);
         }
 
         catch (Exception e) {
