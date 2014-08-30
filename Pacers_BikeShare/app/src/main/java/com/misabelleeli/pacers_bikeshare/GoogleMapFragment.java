@@ -45,8 +45,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private double currentLat;
     private double currentLong;
-    private double myLat;
-    private double myLong;
+    public static double myLat;
+    public static double myLong;
 
     private LayoutInflater Minflater;
 
@@ -312,7 +312,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                     imgName = R.drawable.ic_launcher;
                 }
                 marker.setIcon(BitmapDescriptorFactory.fromResource(imgName));
-                marker.setSnippet(street+"\nUpdated");
+                marker.setSnippet(street + "\nUpdated");
                 marker.showInfoWindow();
             }
         };

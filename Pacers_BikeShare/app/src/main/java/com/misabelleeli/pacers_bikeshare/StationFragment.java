@@ -4,6 +4,8 @@ package com.misabelleeli.pacers_bikeshare;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +30,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -56,13 +65,13 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
 
     private View rootView;
 
-    private final String TAG_LOC = "Location";
-    private final String TAG_Name = "Name";
-    private final String TAG_ADDR = "Address";
-    private final String TAG_Bikes = "BikesAvailable";
-    private final String TAG_Docks = "DocksAvailable";
-    private final String TAG_TotalDocks = "TotalDocks";
-    String url = "https://publicapi.bcycle.com" +
+    private static final String TAG_LOC = "Location";
+    private static final String TAG_Name = "Name";
+    private static final String TAG_ADDR = "Address";
+    private static final String TAG_Bikes = "BikesAvailable";
+    private static final String TAG_Docks = "DocksAvailable";
+    private static final String TAG_TotalDocks = "TotalDocks";
+    private static String url = "https://publicapi.bcycle.com" +
             "/api/1.0/ListProgramKiosks/75";
 
     public StationFragment() {
@@ -122,6 +131,13 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                                 myListView.setTextFilterEnabled(true);
                             }
                         } else {
+
+                            //Getting updated data here
+                            for(int i = 0; i < stations.size(); i++)
+                            {
+                                stations.remove(i);
+                            }
+                            updateStations();
                             adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, stations);
                             swing = new SwingBottomInAnimationAdapter(adapter);
                             swing.setAbsListView(myListView);
@@ -167,6 +183,94 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         super.onViewCreated(view, savedInstanceState);
     }
 
+    public static void updateStations()
+    {
+        AsyncTask<Void, Void, Void> update = new AsyncTask<Void, Void, Void>() {
+
+            private int numStations = 25;
+            private String[] lat = new String[numStations];
+            private String[] lon = new String[numStations];
+            private String[] stationName = new String[numStations];
+            private String[] docks = new String[numStations];
+            private String[] bikesAv = new String[numStations];
+            private float[] miles = new float[numStations];
+            private String[] streetNameOnly = new String[numStations];
+
+            //You get Data here
+            @Override
+            protected Void doInBackground(Void... voids) {
+                com.misabelleeli.pacers_bikeshare.JSONParser jp =
+                        new com.misabelleeli.pacers_bikeshare.JSONParser();
+
+
+                JSONArray bk = jp.getJSONFromUrl(url);
+                if (bk != null) {
+                    try {
+                        int temp = bk.length();
+
+                        for (int i = 0; i < bk.length(); i++) {
+                            JSONObject bike = bk.getJSONObject(i);
+
+                            //Get the necessary values needed here
+                            JSONObject loc = bike.getJSONObject(TAG_LOC);
+                            String latitude = loc.getString("Latitude");
+                            String longitude = loc.getString("Longitude");
+
+                            JSONObject addr = bike.getJSONObject(TAG_ADDR);
+                            String streetName = addr.getString("Street");
+
+                            String title = bike.getString(TAG_Name);
+
+                            String bikesAvail = bike.getString(TAG_Bikes);
+                            String docksAvail = bike.getString(TAG_Docks);
+
+                            lat[i] = latitude;
+                            lon[i] = longitude;
+                            stationName[i] = title;
+                            docks[i] = docksAvail;
+                            bikesAv[i] = bikesAvail;
+                            streetNameOnly[i] = "U-"+streetName;
+
+                            Location myLoc = new Location("a");
+                            //myLat = 39.76789474;
+                            //myLong = -86.15843964;
+                            myLoc.setLatitude(GoogleMapFragment.myLat);
+                            myLoc.setLongitude(GoogleMapFragment.myLong);
+
+                            Location stationLoc = new Location("b");
+                            stationLoc.setLatitude(Double.parseDouble(latitude));
+                            stationLoc.setLongitude(Double.parseDouble(longitude));
+
+                            String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc) * Float.parseFloat("0.000621371"));
+                            //miles[i] = String.format("%.1f", tempMiles);
+                            miles[i] = Float.parseFloat(tempMiles);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.e("JSONParser", "Error, no data");
+                }
+
+                return null;
+            }
+
+            //Update GUI here
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                int imgName = 0;
+
+                for (int i = 0; i < numStations; i++) {
+                    stations.add(new Station(stationName[i], streetNameOnly[i],
+                            Integer.parseInt(bikesAv[i]), Integer.parseInt(docks[i]), miles[i]));
+
+                }
+            }
+        };
+        update.execute((Void[])null);
+    }
     public static void populateStations(String stationName, String addr, int bike, int dock, float miles) {
 
         if(stationNamesList.contains(stationName))
