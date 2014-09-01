@@ -138,6 +138,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                                 stations.remove(i);
                             }
                             updateStations();
+                            Collections.sort(stations);
+                            Collections.sort(favorites);
                             adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, stations);
                             swing = new SwingBottomInAnimationAdapter(adapter);
                             swing.setAbsListView(myListView);

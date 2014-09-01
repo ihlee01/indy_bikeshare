@@ -38,7 +38,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     public long defaultTime = startTime;
     private String hms = "";
     private String defaultHms = "30:00";
-    private long delimiter = 10;
+    private long delimiter = 9;
 
     public  static CounterClass timer;
     private NotificationCompat.Builder mBuilder;
@@ -64,7 +64,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         timer.cancel();
         stopButton.setVisibility(View.GONE);
         startButton.setVisibility(View.VISIBLE);
-        delimiter = 10;
+        delimiter = 9;
         hms = defaultHms;
         timerValue.setText(hms);
         mBuilder.setContentText("Time " + hms);
@@ -80,7 +80,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         startTime = defaultTime*2;
         stopButton.setVisibility(View.GONE);
         startButton.setVisibility(View.VISIBLE);
-        delimiter = 10;
+        delimiter = 9;
         defaultHms = "60:00";
         hms = defaultHms;
         timer = new CounterClass(startTime, 1000, (TimerCountDown) TimerFragment.this);
@@ -100,7 +100,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         startButton.setVisibility(View.VISIBLE);
         startTime = defaultTime;
         timer = new CounterClass(startTime, 1000,(TimerCountDown)TimerFragment.this);
-        delimiter = 10;
+        delimiter = 9;
         defaultHms = "30:00";
         hms = defaultHms;
         timerValue.setText(hms);
@@ -137,11 +137,11 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                         } else {
                             startButton.setText("START");
                             vibrate = true;
-                            if (delimiter == 5) {
+                            if (delimiter == 4) {
                                 delimiter = 1;
                                 mBuilder.setVibrate(new long[]{0});
-                            } else if (delimiter == 10) {
-                                delimiter = 5;
+                            } else if (delimiter == 9) {
+                                delimiter = 4;
                                 mBuilder.setVibrate(new long[]{0});
                             } else if (delimiter == 1) {
                                 delimiter = -1;

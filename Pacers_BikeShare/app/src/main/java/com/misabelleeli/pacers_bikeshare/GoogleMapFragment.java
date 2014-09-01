@@ -2,12 +2,16 @@ package com.misabelleeli.pacers_bikeshare;
 
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -50,28 +56,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private LayoutInflater Minflater;
 
-    /*
-    private double []latitudes = {39.76737,39.77224,39.77643,39.77475,39.77418,39.76885,
-            39.78179,39.77964,39.77564,39.76595,39.76702,39.76720,39.76832,
-            39.77338,39.77669,39.75241,39.75740,39.75893,39.76423,39.76593,
-            39.76866,39.76722,39.77803,39.76481,39.77383};
-    private double []longtitudes={-86.16474,-86.15260,-86.14727,-86.16984,-86.16348,
-            -86.15736,-86.16590, -86.14212,-86.15217,-86.16689,-86.16016,-86.15832,
-            -86.17027,
-            -86.17543,-86.16119,-86.13995,-86.14549,-86.14700,-86.16161,
-            -86.16216,-86.15284,-86.15416,-86.15631,-86.15650,-86.15043};
-    private String []title = {"Indiana Government Center","Mass Ave. and Alabama",
-            "Mass Ave. and Park","Michicgan and Blackford","Michigan and Senate",
-            "Monument Circle","North End of Canal","North End of Mass Ave.",
-            "North and Alabama","Victory Field","Washington and Illinois",
-            "Washington and Meridian","White River State Park", "IUPUI Campus Center",
-            "Glick Peace Walk","Fountain Square","Fletcher Place -Virginia and Norwood",
-            "Fletcher Place -Virginia and Merrill","Convention Center at Georgia Street",
-            "Convention Center - Maryland and Capitol", "City Market",
-            "City County Building","Central Library", "Bankers Life Fieldhouse",
-            "Athenaeum"};
-    */
-
     private final String TAG_LOC = "Location";
     private final String TAG_Name = "Name";
     private final String TAG_ADDR = "Address";
@@ -85,12 +69,12 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         // Required empty public constructor
     }
 
-
     public void getData()
     {
 
         new JSONParser().execute();
     }
+
 
     private class JSONParser extends AsyncTask<Void, String, Void> {
 
@@ -120,8 +104,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             if(bk != null)
             {
                 try{
-                    int temp = bk.length();
-
                     for(int i = 0; i < bk.length(); i++)
                     {
                         JSONObject bike = bk.getJSONObject(i);
@@ -220,35 +202,90 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mMap = getMap();
 
-        mMap.setMyLocationEnabled(true);
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                MIN_TIME,MIN_DISTANCE,this);
+        if(!isOnline(getActivity())){
+            buildAlertMessageNoInternet();
+        }
+        else {
 
-        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+            mMap = getMap();
 
-        getData();
+            mMap.setMyLocationEnabled(true);
+            locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                updateMarkerSnippet(marker);
-                return false;
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                buildAlertMessageNoGps();
+            }
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    MIN_TIME, MIN_DISTANCE, this);
+
+            mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+
+            getData();
+
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    updateMarkerSnippet(marker);
+                    return false;
+                }
+            });
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    //This will redirect it to GoogleMaps
+                    String url = "http://maps.google.com/maps?daddr=" + currentLat + "," + currentLong;
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                    intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                    startActivity(intent);
+                }
+            });
+        }
+    }
+
+    public static boolean isOnline(Context context) {
+
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+            return true;
+        }
+        return false;
+
+    }
+
+    private void buildAlertMessageNoInternet(){
+        AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
+        b.setMessage("No network Connection.\nPlease Exit the application and connect " +
+                "to Wifi or Enable Network to continue. Then re-open the app.");
+        b.setTitle("Internet Connection");
+        b.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+           public void onClick(DialogInterface dialog, int which){
+
             }
         });
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                //This will redirect it to GoogleMaps
-                String url = "http://maps.google.com/maps?daddr="+currentLat+","+currentLong;
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
-                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                startActivity(intent);
-            }
-        });
 
+        final AlertDialog alert = b.create();
+        alert.show();
+    }
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("GPS Location");
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void updateMarkerSnippet(final Marker marker) {
