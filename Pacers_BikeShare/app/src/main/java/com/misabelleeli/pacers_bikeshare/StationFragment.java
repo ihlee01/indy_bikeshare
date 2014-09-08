@@ -197,6 +197,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             private String[] bikesAv = new String[numStations];
             private float[] miles = new float[numStations];
             private String[] streetNameOnly = new String[numStations];
+            private List<Station> updatedStations = new ArrayList<Station>();
 
             //You get Data here
             @Override
@@ -209,20 +210,44 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 if (bk != null) {
                     try {
                         int temp = bk.length();
-
+                        Log.e("Sizes? ", temp+"");
                         for (int i = 0; i < bk.length(); i++) {
                             JSONObject bike = bk.getJSONObject(i);
 
                             //Get the necessary values needed here
+                            //Get Location info
                             JSONObject loc = bike.getJSONObject(TAG_LOC);
                             String latitude = loc.getString("Latitude");
                             String longitude = loc.getString("Longitude");
 
+                            //Get Street
                             JSONObject addr = bike.getJSONObject(TAG_ADDR);
                             String streetName = addr.getString("Street");
 
+                            //Get Station Name
                             String title = bike.getString(TAG_Name);
 
+                            //Statino name filtering
+                            if(title.contains("-")) {
+                                title = title.substring(0, title.indexOf("-")-1);
+                            }
+                            if(title.contains(" at ")) {
+                                title = title.substring(0, title.indexOf("at")-1);
+                            }
+                            if(title.contains("Indiana")) {
+                                title = "Government Center";
+                            }
+                            if(title.contains(" and ")) {
+                                title = title.replace(" and ", "/");
+                            }
+                            if(title.contains(".")) {
+                                title = title.replace(".", "");
+                            }
+                            if(title.contains("North End")) {
+                                title = "North Mass Ave";
+                            }
+
+                            //Get station status
                             String bikesAvail = bike.getString(TAG_Bikes);
                             String docksAvail = bike.getString(TAG_Docks);
 
@@ -246,6 +271,9 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                             String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc) * Float.parseFloat("0.000621371"));
                             //miles[i] = String.format("%.1f", tempMiles);
                             miles[i] = Float.parseFloat(tempMiles);
+
+                            Station curStation = new Station(title, "U-"+streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), Float.parseFloat(tempMiles), Double.parseDouble(latitude), Double.parseDouble(longitude));
+                            updatedStations.add(curStation);
                         }
 
                     } catch (Exception e) {
@@ -262,26 +290,18 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             @Override
             protected void onPostExecute(Void result) {
                 super.onPostExecute(result);
-                int imgName = 0;
-
-                for (int i = 0; i < numStations; i++) {
+                populateStations(updatedStations);
+                /*for (int i = 0; i < numStations; i++) {
                     stations.add(new Station(stationName[i], streetNameOnly[i],
                             Integer.parseInt(bikesAv[i]), Integer.parseInt(docks[i]), miles[i]));
 
-                }
+                }*/
             }
         };
         update.execute((Void[])null);
     }
-    public static void populateStations(String stationName, String addr, int bike, int dock, float miles) {
-
-        if(stationNamesList.contains(stationName))
-        {
-        }
-        else {
-            stationNamesList.add(stationName);
-            stations.add(new Station(stationName, addr, bike, dock, miles));
-        }
+    public static void populateStations(List<Station> stationList) {
+        stations = stationList;
         /*
         stations.add(new Station("IUPUI Campus Center", "401 Univesity Blvd", 7, 9, 4));
         stations.add(new Station("North End of Canal", "1325 Canal Walk", 7, 4, 8));

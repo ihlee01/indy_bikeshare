@@ -6,8 +6,8 @@ import java.io.Serializable;
  * Created by Lee on 2014-07-14.
  */
 public class Station implements Comparable<Station>, Serializable {
-    private double lat;
-    private double lon;
+    private double latitude;
+    private double longitude;
     private String name;
     private String address;
     private int bikes;
@@ -15,13 +15,15 @@ public class Station implements Comparable<Station>, Serializable {
     private float distance;
     private boolean favorite;
 
-    public Station(String name, String address, int bikes, int docks, float distance) {
+    public Station(String name, String address, int bikes, int docks, float distance, double latitude, double longitude) {
         this.name = name;
         this.address = address;
         this.bikes = bikes;
         this.docks = docks;
         this.distance = distance;
         this.favorite = false;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public void setAddress(String address) {
@@ -44,18 +46,15 @@ public class Station implements Comparable<Station>, Serializable {
         this.favorite = favorite;
     }
 
-    public void setLat(double lat){this.lat = lat;}
+    public void setLatitude(double latitude){this.latitude = latitude;}
 
-    public void setLon(double lon) {this.lon = lon;}
+    public void setLongtitude(double longitude) {this.longitude = longitude;}
 
-    public int getBikes() {
+    public int getBikes() {return bikes;}
 
-        return bikes;
-    }
+    public double getLatitude(){return latitude;}
 
-    public double getLat(){return lat;}
-
-    public double getLon() {return lon;}
+    public double getLongtitude() {return longitude;}
 
     public int getDocks() {
         return docks;
@@ -80,7 +79,7 @@ public class Station implements Comparable<Station>, Serializable {
     @Override
     public int compareTo(Station station) {
         //Ascending order by distance
-        int dist = Math.round(((Station) station).getDistance());
-        return Math.round(this.distance) - dist;
+        int dist = Math.round(station.getDistance()*10);
+        return Math.round(this.distance*10) - dist;
     }
 }

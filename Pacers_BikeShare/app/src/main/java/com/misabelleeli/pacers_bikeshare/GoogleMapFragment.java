@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -64,6 +65,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     private final String TAG_TotalDocks = "TotalDocks";
     String url = "https://publicapi.bcycle.com" +
             "/api/1.0/ListProgramKiosks/75";
+
+    private List<Station> stations = new ArrayList<Station>();
 
     public GoogleMapFragment() {
         // Required empty public constructor
@@ -117,16 +120,35 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         String streetName = addr.getString("Street");
 
                         String title = bike.getString(TAG_Name);
+                        //Statino name filtering
+                        if(title.contains("-")) {
+                            title = title.substring(0, title.indexOf("-")-1);
+                        }
+                        if(title.contains(" at ")) {
+                            title = title.substring(0, title.indexOf("at")-1);
+                        }
+                        if(title.contains("Indiana")) {
+                            title = "Government Center";
+                        }
+                        if(title.contains(" and ")) {
+                            title = title.replace(" and ", "/");
+                        }
+                        if(title.contains(".")) {
+                            title = title.replace(".", "");
+                        }
+                        if(title.contains("North End")) {
+                            title = "North Mass Ave";
+                        }
 
                         String bikesAvail = bike.getString(TAG_Bikes);
                         String docksAvail = bike.getString(TAG_Docks);
                         String totalDocks = bike.getString(TAG_TotalDocks);
 
+
                         lat[i] = latitude;
                         lon[i] = longitude;
                         street[i] = "\n"+ TAG_Bikes+": "+bikesAvail
-                                + "\n" + TAG_Docks+": "+ docksAvail
-                                + "\n" + TAG_TotalDocks+": "+ totalDocks;
+                                + "\n" + TAG_Docks+": "+ docksAvail;
                         stationName[i] = title;
                         docks[i] = docksAvail;
                         bikesAv[i] = bikesAvail;
@@ -146,6 +168,10 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         //miles[i] = String.format("%.1f", tempMiles);
                         miles[i] = Float.parseFloat(tempMiles);
                         publishProgress(street[i]);
+
+                        Station curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), Float.parseFloat(tempMiles), Double.parseDouble(latitude), Double.parseDouble(longitude));
+                        stations.add(curStation);
+
                     }
 
                 }catch(Exception e){
@@ -165,10 +191,9 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         {
             super.onPostExecute(result);
             int imgName = 0;
-
             for(int i = 0; i < numStations; i++) {
 
-                if(docks[i].equals("0"))
+                if(bikesAv[i].equals("0"))
                 {
                     imgName = R.drawable.ic_launcher_grey;
                 }
@@ -182,10 +207,10 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         .snippet(street[i])
                         .icon(BitmapDescriptorFactory.fromResource(imgName)));
 
-                StationFragment.populateStations(stationName[i], streetNameOnly[i],
-                        Integer.parseInt(bikesAv[i]),Integer.parseInt(docks[i]),miles[i]);
+
 
             }
+            StationFragment.populateStations(stations);
         }
 
     }
@@ -317,8 +342,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
                                 docks = Integer.parseInt(docksAvail);
                                 street = "\n" + TAG_Bikes + ": " + bikesAvail
-                                        + "\n" + TAG_Docks + ": " + docksAvail
-                                        + "\n" + TAG_TotalDocks + ": " + totalDocks;
+                                        + "\n" + TAG_Docks + ": " + docksAvail;
                                 break;
                             }
                         }
