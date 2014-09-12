@@ -41,6 +41,4 @@ public class IntroActivity extends Activity {
         super.onBackPressed();
         handler.removeCallbacks(irun);
     }
-
-
 }
