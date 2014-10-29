@@ -1,7 +1,6 @@
 package com.misabelleeli.pacers_bikeshare;
 
 
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,6 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -39,7 +40,6 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- *
  */
 public class GoogleMapFragment extends SupportMapFragment implements LocationListener {
 
@@ -66,16 +66,16 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private List<Station> stations = new ArrayList<Station>();
 
+    boolean isUpdated = false;
+
     public GoogleMapFragment() {
         // Required empty public constructor
     }
 
-    public void getData()
-    {
+    public void getData() {
 
         new JSONParser().execute();
     }
-
 
     private class JSONParser extends AsyncTask<Void, String, Void> {
 
@@ -102,11 +102,10 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
 
             JSONArray bk = jp.getJSONFromUrl(url);
-            if(bk != null)
-            {
-                try{
-                    for(int i = 0; i < bk.length(); i++)
-                    {
+            if (bk != null) {
+                try {
+                    stations = new ArrayList<Station>();
+                    for (int i = 0; i < bk.length(); i++) {
                         JSONObject bike = bk.getJSONObject(i);
 
                         //Get the necessary values needed here
@@ -119,22 +118,30 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
                         String title = bike.getString(TAG_Name);
                         //Statino name filtering
-                        if(title.contains("-")) {
-                            title = title.substring(0, title.indexOf("-")-1);
+                        if(title.contains("Fletcher")) {
+                            if(title.contains("Norwood")) {
+                                title = "Virginia/Norwood";
+                            }
+                            else {
+                                title = "Virginia/Merrill";
+                            }
                         }
-                        if(title.contains(" at ")) {
-                            title = title.substring(0, title.indexOf("at")-1);
+                        if (title.contains("-")) {
+                            title = title.substring(0, title.indexOf("-") - 1);
                         }
-                        if(title.contains("Indiana")) {
+                        if (title.contains(" at ")) {
+                            title = title.substring(0, title.indexOf("at") - 1);
+                        }
+                        if (title.contains("Indiana")) {
                             title = "Government Center";
                         }
-                        if(title.contains(" and ")) {
+                        if (title.contains(" and ")) {
                             title = title.replace(" and ", "/");
                         }
-                        if(title.contains(".")) {
+                        if (title.contains(".")) {
                             title = title.replace(".", "");
                         }
-                        if(title.contains("North End")) {
+                        if (title.contains("North End")) {
                             title = "North Mass Ave";
                         }
 
@@ -145,8 +152,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
                         lat[i] = latitude;
                         lon[i] = longitude;
-                        street[i] = "\n"+ TAG_Bikes+": "+bikesAvail
-                                + "\n" + TAG_Docks+": "+ docksAvail;
+                        street[i] = bikesAvail +","+docksAvail+","+streetName+"";
                         stationName[i] = title;
                         docks[i] = docksAvail;
                         bikesAv[i] = bikesAvail;
@@ -162,21 +168,19 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         stationLoc.setLatitude(Double.parseDouble(latitude));
                         stationLoc.setLongitude(Double.parseDouble(longitude));
 
-                        String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc)* Float.parseFloat("0.000621371"));
-                        //miles[i] = String.format("%.1f", tempMiles);
+                        String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc) * Float.parseFloat("0.000621371"));
                         miles[i] = Float.parseFloat(tempMiles);
                         publishProgress(street[i]);
 
                         Station curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), Float.parseFloat(tempMiles), Double.parseDouble(latitude), Double.parseDouble(longitude));
-                        stations.add(curStation);
 
+                        stations.add(curStation);
                     }
 
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-            else{
+            } else {
                 Log.e("JSONParser", "Error, no data");
             }
 
@@ -185,18 +189,14 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
         //Update GUI here
         @Override
-        protected void onPostExecute(Void result)
-        {
+        protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             int imgName = 0;
-            for(int i = 0; i < numStations; i++) {
+            for (int i = 0; i < numStations; i++) {
 
-                if(bikesAv[i].equals("0"))
-                {
+                if (bikesAv[i].equals("0")) {
                     imgName = R.drawable.ic_launcher_grey;
-                }
-                else
-                {
+                } else {
                     imgName = R.drawable.ic_launcher;
                 }
                 mMap.addMarker(new MarkerOptions()
@@ -204,9 +204,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         .title(stationName[i])
                         .snippet(street[i])
                         .icon(BitmapDescriptorFactory.fromResource(imgName)));
-
-
-
             }
             StationFragment.populateStations(stations);
         }
@@ -226,10 +223,9 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(!isOnline(getActivity())){
+        if (!isOnline(getActivity())) {
             buildAlertMessageNoInternet();
-        }
-        else {
+        } else {
 
             mMap = getMap();
 
@@ -278,13 +274,13 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     }
 
-    private void buildAlertMessageNoInternet(){
+    private void buildAlertMessageNoInternet() {
         AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
         b.setMessage("No network Connection.\nPlease Exit the application and connect " +
                 "to Wifi or Enable Network to continue. Then re-open the app.");
         b.setTitle("Internet Connection");
-        b.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
+        b.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
 
             }
         });
@@ -292,6 +288,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         final AlertDialog alert = b.create();
         alert.show();
     }
+
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("GPS Location");
@@ -316,7 +313,9 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
         AsyncTask<Void, Void, Void> update = new AsyncTask<Void, Void, Void>() {
             private String street = "";
-            private int docks = 0;
+            //Previous # of bike
+            private int bikes = Integer.parseInt(marker.getSnippet().split(",")[0]);
+
             //You get Data here
             @Override
             protected Void doInBackground(Void... voids) {
@@ -324,32 +323,72 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         new com.misabelleeli.pacers_bikeshare.JSONParser();
 
                 JSONArray bk = jp.getJSONFromUrl(url);
-                if(bk != null)
-                {
-                    try{
-                        for(int i = 0; i < bk.length(); i++)
-                        {
+                if (bk != null) {
+
+                    try {
+                        for (int i = 0; i < bk.length(); i++) {
                             JSONObject bike = bk.getJSONObject(i);
+
 
                             String title = bike.getString(TAG_Name);
 
-                            if(title.equals(markerTitle)) {
-                                String bikesAvail = bike.getString(TAG_Bikes);
-                                String docksAvail = bike.getString(TAG_Docks);
-                                String totalDocks = bike.getString(TAG_TotalDocks);
 
-                                docks = Integer.parseInt(docksAvail);
-                                street = "\n" + TAG_Bikes + ": " + bikesAvail
-                                        + "\n" + TAG_Docks + ": " + docksAvail;
-                                break;
+                            //Statino name filtering
+                            if(title.contains("Fletcher")) {
+                                if(title.contains("Norwood")) {
+                                    title = "Virginia/Norwood";
+                                }
+                                else {
+                                    title = "Virginia/Merrill";
+                                }
                             }
+                            if (title.contains("-")) {
+                                title = title.substring(0, title.indexOf("-") - 1);
+                            }
+                            if (title.contains(" at ")) {
+                                title = title.substring(0, title.indexOf("at") - 1);
+                            }
+                            if (title.contains("Indiana")) {
+                                title = "Government Center";
+                            }
+                            if (title.contains(" and ")) {
+                                title = title.replace(" and ", "/");
+                            }
+                            if (title.contains(".")) {
+                                title = title.replace(".", "");
+                            }
+                            if (title.contains("North End")) {
+                                title = "North Mass Ave";
+                            }
+                            if (title.equals(markerTitle)) {
+                                String bikesAvail = bike.getString(TAG_Bikes);
+
+                                //if # of bikes, No need to update - don't refresh
+                                if(bikes == Integer.parseInt(bikesAvail)) {
+                                    isUpdated = false;
+                                }
+                                else {
+                                    isUpdated = true;
+                                }
+
+
+                                String docksAvail = bike.getString(TAG_Docks);
+                                JSONObject addr = bike.getJSONObject(TAG_ADDR);
+                                String streetName = addr.getString("Street");
+
+                                bikes = Integer.parseInt(bikesAvail);
+                                street = bikesAvail +","+docksAvail+","+streetName;
+                                break;
+
+                            }
+
+
                         }
 
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else{
+                } else {
                     Log.e("MarkerUpdate", "Error, no data");
                 }
 
@@ -358,21 +397,19 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
             //Update GUI here
             @Override
-            protected void onPostExecute(Void result)
-            {
+            protected void onPostExecute(Void result) {
                 super.onPostExecute(result);
-                int imgName = 0;
-                if(docks == 0)
-                {
-                    imgName = R.drawable.ic_launcher_grey;
+                if(isUpdated) {
+                    int imgName = 0;
+                    if (bikes == 0) {
+                        imgName = R.drawable.ic_launcher_grey;
+                    } else {
+                        imgName = R.drawable.ic_launcher;
+                    }
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(imgName));
+                    marker.setSnippet(street);
+                    marker.showInfoWindow();
                 }
-                else
-                {
-                    imgName = R.drawable.ic_launcher;
-                }
-                marker.setIcon(BitmapDescriptorFactory.fromResource(imgName));
-                marker.setSnippet(street + "\nUpdated");
-                marker.showInfoWindow();
             }
         };
         update.execute((Void[]) null);
@@ -382,7 +419,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     public void onLocationChanged(Location location) {
         myLat = location.getLatitude();
         myLong = location.getLongitude();
-        LatLng latLng = new LatLng(myLat,myLong);
+        LatLng latLng = new LatLng(myLat, myLong);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
         mMap.animateCamera(cameraUpdate);
         locationManager.removeUpdates(this);
@@ -422,17 +459,34 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             String desp = marker.getSnippet();
 
             // Getting reference to the TextView to set latitude
-            TextView title = (TextView) v.findViewById(R.id.title);
+            TextView station_name = (TextView) v.findViewById(R.id.map_station_name);
+            TextView station_address = (TextView) v.findViewById(R.id.map_station_address);
+            TextView station_bikes = (TextView) v.findViewById(R.id.map_bikes);
+            TextView station_docks = (TextView) v.findViewById(R.id.map_docks);
+
+            ImageView bike_avail = (ImageView) v.findViewById(R.id.map_bike_avail);
+            ImageView dock_avail = (ImageView) v.findViewById(R.id.map_dock_avail);
+
 
             // Getting reference to the TextView to set longitude
-            TextView description = (TextView) v.findViewById(R.id.snippet);
+            //TextView description = (TextView) v.findViewById(R.id.snippet);
 
-            currentLat = latLng.latitude;
-            currentLong = latLng.longitude;
+            station_name.setText(name);
+            String[] result = desp.split(",");
+            String bikes = result[0];
+            String docks = result[1];
+            String address = result[2];
+            station_address.setText(address);
+            station_bikes.setText(bikes);
+            station_docks.setText(docks);
 
-            title.setText(name);
+            float totalBike = Integer.parseInt(bikes) + Integer.parseInt(docks);
+            float bike_ratio = (Integer.parseInt(bikes)/totalBike*100);
+            float dock_ratio = 100 - bike_ratio;
+            bike_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, bike_ratio));
+            dock_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, dock_ratio));
 
-            description.setText(desp+"\n\nClick for Directions.");
+            //description.setText(desp+"\n\nClick for Directions.");
 
             // Returning the view containing InfoWindow contents
             return v;
