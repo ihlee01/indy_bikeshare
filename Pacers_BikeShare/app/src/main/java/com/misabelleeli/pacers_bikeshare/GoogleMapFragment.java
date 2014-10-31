@@ -48,8 +48,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
 
-    private double currentLat;
-    private double currentLong;
     public static double myLat;
     public static double myLong;
 
@@ -117,6 +115,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         String streetName = addr.getString("Street");
 
                         String title = bike.getString(TAG_Name);
+
                         //Statino name filtering
                         if(title.contains("Fletcher")) {
                             if(title.contains("Norwood")) {
@@ -142,7 +141,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                             title = title.replace(".", "");
                         }
                         if (title.contains("North End")) {
-                            title = "North Mass Ave";
+                            title = "North Canal";
                         }
 
                         String bikesAvail = bike.getString(TAG_Bikes);
@@ -159,8 +158,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         streetNameOnly[i] = streetName;
 
                         Location myLoc = new Location("a");
-                        //myLat = 39.76789474;
-                        //myLong = -86.15843964;
                         myLoc.setLatitude(myLat);
                         myLoc.setLongitude(myLong);
 
@@ -253,7 +250,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                 @Override
                 public void onInfoWindowClick(Marker marker) {
                     //This will redirect it to GoogleMaps
-                    String url = "http://maps.google.com/maps?daddr=" + currentLat + "," + currentLong;
+
+                    String url = "http://maps.google.com/maps?daddr=" + marker.getPosition().latitude + "," + marker.getPosition().longitude;
                     Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
                     intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                     startActivity(intent);
@@ -311,10 +309,12 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     private void updateMarkerSnippet(final Marker marker) {
         final String markerTitle = marker.getTitle();
 
+
         AsyncTask<Void, Void, Void> update = new AsyncTask<Void, Void, Void>() {
-            private String street = "";
+            private String snippet = "";
             //Previous # of bike
             private int bikes = Integer.parseInt(marker.getSnippet().split(",")[0]);
+            private String original_street = marker.getSnippet().split(",")[2];
 
             //You get Data here
             @Override
@@ -332,6 +332,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
                             String title = bike.getString(TAG_Name);
 
+                            JSONObject addr = bike.getJSONObject(TAG_ADDR);
+                            String streetName = addr.getString("Street");
 
                             //Statino name filtering
                             if(title.contains("Fletcher")) {
@@ -358,9 +360,9 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                                 title = title.replace(".", "");
                             }
                             if (title.contains("North End")) {
-                                title = "North Mass Ave";
+                                title = "North Canal";
                             }
-                            if (title.equals(markerTitle)) {
+                            if (streetName.equals(original_street)) {
                                 String bikesAvail = bike.getString(TAG_Bikes);
 
                                 //if # of bikes, No need to update - don't refresh
@@ -373,16 +375,18 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
 
                                 String docksAvail = bike.getString(TAG_Docks);
-                                JSONObject addr = bike.getJSONObject(TAG_ADDR);
-                                String streetName = addr.getString("Street");
+
+
+                                JSONObject loc = bike.getJSONObject(TAG_LOC);
+                                myLat = loc.getDouble("Latitude");
+                                myLong = loc.getDouble("Longitude");
+
 
                                 bikes = Integer.parseInt(bikesAvail);
-                                street = bikesAvail +","+docksAvail+","+streetName;
+                                snippet = bikesAvail +","+docksAvail+","+streetName;
+
                                 break;
-
                             }
-
-
                         }
 
                     } catch (Exception e) {
@@ -406,9 +410,11 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                     } else {
                         imgName = R.drawable.ic_launcher;
                     }
+                    marker.setPosition(new LatLng(myLat, myLong));
                     marker.setIcon(BitmapDescriptorFactory.fromResource(imgName));
-                    marker.setSnippet(street);
+                    marker.setSnippet(snippet);
                     marker.showInfoWindow();
+                    isUpdated = false;
                 }
             }
         };
@@ -485,8 +491,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             float dock_ratio = 100 - bike_ratio;
             bike_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, bike_ratio));
             dock_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, dock_ratio));
-
-            //description.setText(desp+"\n\nClick for Directions.");
 
             // Returning the view containing InfoWindow contents
             return v;

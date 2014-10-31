@@ -2,8 +2,10 @@ package com.misabelleeli.pacers_bikeshare;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -181,7 +183,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
         super.onViewCreated(view, savedInstanceState);
     }
 
-    public static void updateStations() {
+    public void updateStations() {
         AsyncTask<Void, Void, Void> update = new AsyncTask<Void, Void, Void>() {
 
             private int numStations = 25;
@@ -245,7 +247,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                                 title = title.replace(".", "");
                             }
                             if (title.contains("North End")) {
-                                title = "North Mass Ave";
+                                title = "North Canal";
                             }
 
                             //Get station status
@@ -301,12 +303,18 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                     for (int j = 0; j < favorites.size(); j++) {
                         if (stations.get(i).getAddress().equals(favorites.get(j).getAddress())) {
                             stations.get(i).setFavorite(true);
+
+                            //update favorites too
+                            favorites.get(j).setBikes(stations.get(i).getBikes());
+                            favorites.get(j).setDocks(stations.get(i).getDocks());
+
                             break;
                         } else {
                             stations.get(i).setFavorite(false);
                         }
                     }
                 }
+                storeObject("favorites", favorites);
                 swing = new SwingBottomInAnimationAdapter(adapter);
                 swing.setAbsListView(myListView);
                 myListView.setAdapter(swing);
@@ -516,15 +524,17 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 }
             });
 
-            rowView.setTag(curStation.getName());
+            rowView.setTag(curStation.getLatitude()+","+curStation.getLongtitude());
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //To do...
+                    Double lat = Double.parseDouble(view.getTag().toString().split(",")[0]);
+                    Double lon = Double.parseDouble(view.getTag().toString().split(",")[1]);
 
-                    //When the row is clicked. view.getTag() returns the address name.
-
-                    //Toast.makeText(getActivity(), ""+view.getTag(), Toast.LENGTH_SHORT).show();
+                    String url = "http://maps.google.com/maps?daddr=" + lat+ "," + lon;
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                    intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                    startActivity(intent);
                 }
             });
             return rowView;
