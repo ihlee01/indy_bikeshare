@@ -48,7 +48,6 @@ import java.util.List;
 
 public class StationFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
     private static List<Station> stations = new ArrayList<Station>();
-    private static List<String> stationNamesList = new ArrayList<String>();
     private static List<Station> favorites = new ArrayList<Station>();
     private static SwingBottomInAnimationAdapter swing;
     private static ArrayAdapter<Station> adapter;
@@ -68,7 +67,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     private static final String TAG_ADDR = "Address";
     private static final String TAG_Bikes = "BikesAvailable";
     private static final String TAG_Docks = "DocksAvailable";
-    private static final String TAG_TotalDocks = "TotalDocks";
     private static String url = "https://publicapi.bcycle.com" +
             "/api/1.0/ListProgramKiosks/75";
 
@@ -186,14 +184,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
     public void updateStations() {
         AsyncTask<Void, Void, Void> update = new AsyncTask<Void, Void, Void>() {
 
-            private int numStations = 25;
-            private String[] lat = new String[numStations];
-            private String[] lon = new String[numStations];
-            private String[] stationName = new String[numStations];
-            private String[] docks = new String[numStations];
-            private String[] bikesAv = new String[numStations];
-            private float[] miles = new float[numStations];
-            private String[] streetNameOnly = new String[numStations];
             private List<Station> updatedStations = new ArrayList<Station>();
 
             //You get Data here
@@ -206,7 +196,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 JSONArray bk = jp.getJSONFromUrl(url);
                 if (bk != null) {
                     try {
-                        int temp = bk.length();
                         for (int i = 0; i < bk.length(); i++) {
                             JSONObject bike = bk.getJSONObject(i);
 
@@ -254,16 +243,8 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                             String bikesAvail = bike.getString(TAG_Bikes);
                             String docksAvail = bike.getString(TAG_Docks);
 
-                            lat[i] = latitude;
-                            lon[i] = longitude;
-                            stationName[i] = title;
-                            docks[i] = docksAvail;
-                            bikesAv[i] = bikesAvail;
-                            streetNameOnly[i] = "U-" + streetName;
 
                             Location myLoc = new Location("a");
-                            //myLat = 39.76789474;
-                            //myLong = -86.15843964;
                             myLoc.setLatitude(GoogleMapFragment.myLat);
                             myLoc.setLongitude(GoogleMapFragment.myLong);
 
@@ -272,8 +253,6 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                             stationLoc.setLongitude(Double.parseDouble(longitude));
 
                             String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc) * Float.parseFloat("0.000621371"));
-                            //miles[i] = String.format("%.1f", tempMiles);
-                            miles[i] = Float.parseFloat(tempMiles);
 
                             Station curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), Float.parseFloat(tempMiles), Double.parseDouble(latitude), Double.parseDouble(longitude));
                             updatedStations.add(curStation);
@@ -524,14 +503,14 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 }
             });
 
-            rowView.setTag(curStation.getLatitude()+","+curStation.getLongtitude());
+            rowView.setTag(curStation.getLatitude() + "," + curStation.getLongtitude());
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Double lat = Double.parseDouble(view.getTag().toString().split(",")[0]);
                     Double lon = Double.parseDouble(view.getTag().toString().split(",")[1]);
 
-                    String url = "http://maps.google.com/maps?daddr=" + lat+ "," + lon;
+                    String url = "http://maps.google.com/maps?daddr=" + lat + "," + lon;
                     Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
                     intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                     startActivity(intent);
@@ -546,7 +525,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             protected FilterResults performFiltering(CharSequence charSequence) {
                 FilterResults results = new FilterResults();
                 charSequence = charSequence.toString().toLowerCase();
-                if (charSequence == null || charSequence.length() == 0) {
+                if (charSequence.length() == 0) {
                     results.values = original_list;
                     results.count = original_list.size();
                 } else {

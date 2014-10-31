@@ -58,7 +58,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     private final String TAG_ADDR = "Address";
     private final String TAG_Bikes = "BikesAvailable";
     private final String TAG_Docks = "DocksAvailable";
-    private final String TAG_TotalDocks = "TotalDocks";
     String url = "https://publicapi.bcycle.com" +
             "/api/1.0/ListProgramKiosks/75";
 
@@ -146,7 +145,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
                         String bikesAvail = bike.getString(TAG_Bikes);
                         String docksAvail = bike.getString(TAG_Docks);
-                        String totalDocks = bike.getString(TAG_TotalDocks);
 
 
                         lat[i] = latitude;
@@ -188,7 +186,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            int imgName = 0;
+            int imgName;
             for (int i = 0; i < numStations; i++) {
 
                 if (bikesAv[i].equals("0")) {
@@ -460,7 +458,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             View v = Minflater.inflate(R.layout.custom_infowindow, null);
 
             // Getting the position from the marker
-            LatLng latLng = marker.getPosition();
             String name = marker.getTitle();
             String desp = marker.getSnippet();
 
