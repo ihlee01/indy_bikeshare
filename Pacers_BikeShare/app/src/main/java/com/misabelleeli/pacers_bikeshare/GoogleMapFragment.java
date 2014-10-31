@@ -225,6 +225,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             mMap = getMap();
 
             mMap.setMyLocationEnabled(true);
+
             locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -425,7 +426,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         myLong = location.getLongitude();
         LatLng latLng = new LatLng(myLat, myLong);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
-        mMap.animateCamera(cameraUpdate);
+        mMap.animateCamera(cameraUpdate, 10, null);
         locationManager.removeUpdates(this);
     }
 
