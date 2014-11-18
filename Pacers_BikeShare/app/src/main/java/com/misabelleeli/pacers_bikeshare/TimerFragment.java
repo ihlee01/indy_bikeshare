@@ -4,18 +4,16 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -35,10 +33,10 @@ public class TimerFragment extends Fragment implements TimerCountDown{
 
     private TextView timerValue;
     public static long startTime = 1800000; //milliseconds
-    public long defaultTime = startTime;
+    public long curr_Time = 1800000;
     private String hms = "";
-    private String defaultHms = "30:00";
-    private long delimiter = 9;
+    private String current_Hms = "30:00";
+    private long timeout = 5;
 
     public  static CounterClass timer;
     private NotificationCompat.Builder mBuilder;
@@ -64,25 +62,85 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         timer.cancel();
         stopButton.setVisibility(View.GONE);
         startButton.setVisibility(View.VISIBLE);
-        delimiter = 9;
-        hms = defaultHms;
+        addButton.setVisibility(View.VISIBLE);
+        minusButton.setVisibility(View.VISIBLE);
+        timeout = 5;
+        hms = "30:00";
+        startTime = 1800000;
+        curr_Time = startTime;
+        current_Hms = hms;
         timerValue.setText(hms);
         mBuilder.setContentText("Time " + hms);
+
         // mId allows you to update the notification later on.
         nManager.notify(0, mBuilder.build());
         nManager.cancelAll();
-        timer = new CounterClass(startTime, 1000,(TimerCountDown)TimerFragment.this);
+        timer = new CounterClass(curr_Time, 1000,(TimerCountDown)TimerFragment.this);
     }
 
     public void addTime()
     {
         timer.cancel();
-        startTime = defaultTime*2;
         stopButton.setVisibility(View.GONE);
         startButton.setVisibility(View.VISIBLE);
-        delimiter = 9;
-        defaultHms = "60:00";
-        hms = defaultHms;
+        timeout = 5;
+
+        if(current_Hms.equals("30:00"))
+        {
+            startTime = curr_Time +300000;
+            curr_Time = startTime;
+            current_Hms = "35:00";
+        }
+        else if(current_Hms.equals("35:00"))
+        {
+            startTime = curr_Time +300000;
+            curr_Time = startTime;
+            current_Hms = "40:00";
+        }
+        else if(current_Hms.equals("40:00"))
+        {
+            startTime = curr_Time +300000;
+            curr_Time = startTime;
+            current_Hms = "45:00";
+        }
+        else if(current_Hms.equals("45:00"))
+        {
+            startTime = curr_Time +300000;
+            curr_Time = startTime;
+            current_Hms = "50:00";
+        }
+        else if(current_Hms.equals("50:00"))
+        {
+            startTime = curr_Time +300000;
+            curr_Time = startTime;
+            current_Hms = "55:00";
+        }
+        else if(current_Hms.equals("55:00"))
+        {
+            startTime = curr_Time +300000;
+            curr_Time = startTime;
+            current_Hms = "60:00";
+        }
+        else if(current_Hms.equals("25:00"))
+        {
+            startTime = curr_Time +300000;
+            curr_Time = startTime;
+            current_Hms = "30:00";
+        }
+        else if(current_Hms.equals("20:00"))
+        {
+            startTime = curr_Time +300000;
+            curr_Time = startTime;
+            current_Hms = "25:00";
+        }
+        else
+        {
+            curr_Time = 1800000;
+            startTime = curr_Time *2;
+            current_Hms = "60:00";
+        }
+
+        hms = current_Hms;
         timer = new CounterClass(startTime, 1000, (TimerCountDown) TimerFragment.this);
         timerValue.setText(hms);
 
@@ -91,18 +149,71 @@ public class TimerFragment extends Fragment implements TimerCountDown{
             mBuilder.setContentText("Time " + hms);
             nManager.notify(0, mBuilder.build());
         }
-
     }
     public void minusTime()
     {
         timer.cancel();
         stopButton.setVisibility(View.GONE);
         startButton.setVisibility(View.VISIBLE);
-        startTime = defaultTime;
+
+        if(current_Hms.equals("30:00"))
+        {
+            startTime = curr_Time -300000;
+            curr_Time = startTime;
+            current_Hms = "25:00";
+        }
+        else if(current_Hms.equals("25:00"))
+        {
+            startTime = curr_Time -300000;
+            curr_Time = startTime;
+            current_Hms = "20:00";
+        }
+        else if(current_Hms.equals("35:00"))
+        {
+            startTime = curr_Time -300000;
+            curr_Time = startTime;
+            current_Hms = "30:00";
+        }
+        else if(current_Hms.equals("40:00"))
+        {
+            startTime = curr_Time -300000;
+            curr_Time = startTime;
+            current_Hms = "35:00";
+        }
+        else if(current_Hms.equals("45:00"))
+        {
+            startTime = curr_Time -300000;
+            curr_Time = startTime;
+            current_Hms = "40:00";
+        }
+        else if(current_Hms.equals("50:00"))
+        {
+            startTime = curr_Time -300000;
+            curr_Time = startTime;
+            current_Hms = "45:00";
+        }
+        else if(current_Hms.equals("55:00"))
+        {
+            startTime = curr_Time -300000;
+            curr_Time = startTime;
+            current_Hms = "50:00";
+        }
+        else if(current_Hms.equals("60:00"))
+        {
+            startTime = curr_Time -300000;
+            curr_Time = startTime;
+            current_Hms = "55:00";
+        }
+        else
+        {
+            curr_Time = 1200000;
+            startTime = curr_Time;
+            current_Hms = "20:00";
+        }
+
         timer = new CounterClass(startTime, 1000,(TimerCountDown)TimerFragment.this);
-        delimiter = 9;
-        defaultHms = "30:00";
-        hms = defaultHms;
+        timeout = 5;
+        hms = current_Hms;
         timerValue.setText(hms);
 
         if(mBuilder != null)
@@ -134,21 +245,16 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                         view.setBackgroundColor(view.getResources().getColor(R.color.start_green));
                         if (!vibrate) {
                             timer.start();
+                            addButton.setVisibility(View.GONE);
+                            minusButton.setVisibility(View.GONE);
                         } else {
                             startButton.setText("START");
                             vibrate = true;
-                            if (delimiter == 4) {
-                                delimiter = 1;
-                                mBuilder.setVibrate(new long[]{0});
-                            } else if (delimiter == 9) {
-                                delimiter = 4;
-                                mBuilder.setVibrate(new long[]{0});
-                            } else if (delimiter == 1) {
-                                delimiter = -1;
+                            if (timeout == 5) {
+                                timeout = -1;
                                 mBuilder.setVibrate(new long[]{0});
                             }
                         }
-
                         startButton.setVisibility(View.GONE);
                         stopButton.setVisibility(View.VISIBLE);
                         showNotification();
@@ -287,14 +393,17 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         // mId allows you to update the notification later on.
         nManager.notify(0, mBuilder.build());
 
-        if(delimiter == min)
+        if(timeout == min)
         {
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            mBuilder.setSound(alarmSound);
+            mBuilder.setOngoing(true);
             mBuilder.setVibrate(new long[]{500,500,500});
             mBuilder.setOngoing(true);
             vibrate = true;
             stopButton.setVisibility(View.GONE);
             startButton.setVisibility(View.VISIBLE);
-            startButton.setText("SNOOZE");
+            startButton.setText("OK");
         }
     }
 }
