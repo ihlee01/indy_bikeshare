@@ -424,9 +424,11 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     public void onLocationChanged(Location location) {
         myLat = location.getLatitude();
         myLong = location.getLongitude();
-        LatLng latLng = new LatLng(myLat, myLong);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
-        mMap.animateCamera(cameraUpdate, 10, null);
+
+        //Start from Indianapolis
+        LatLng latLng = new LatLng(39.768403, -86.15806800000001);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
+        mMap.animateCamera(cameraUpdate);
         locationManager.removeUpdates(this);
     }
 
