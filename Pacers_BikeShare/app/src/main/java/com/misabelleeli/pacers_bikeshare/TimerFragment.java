@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 
 
 /**
@@ -44,6 +46,8 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     private int requestID = 001;
     private boolean vibrate = false;
 
+    private boolean isEnabled = false;
+
     public TimerFragment() {
         // Required empty public constructor
         timer = new CounterClass(startTime, 1000, this);
@@ -62,8 +66,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         timer.cancel();
         stopButton.setVisibility(View.GONE);
         startButton.setVisibility(View.VISIBLE);
-        addButton.setVisibility(View.VISIBLE);
-        minusButton.setVisibility(View.VISIBLE);
+        isEnabled = true;
         timeout = 5;
         hms = "30:00";
         startTime = 1800000;
@@ -245,8 +248,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
                         view.setBackgroundColor(view.getResources().getColor(R.color.start_green));
                         if (!vibrate) {
                             timer.start();
-                            addButton.setVisibility(View.GONE);
-                            minusButton.setVisibility(View.GONE);
+                            isEnabled = false;
                         } else {
                             startButton.setText("START");
                             vibrate = true;
@@ -294,14 +296,26 @@ public class TimerFragment extends Fragment implements TimerCountDown{
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addTime();
+                if(!isEnabled) {
+                    Toast.makeText(getActivity(), "Please, stop timer to change the time.",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    addTime();
+                }
             }
         });
         minusButton = (ImageButton) getView().findViewById(R.id.minus_button);
         minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                minusTime();
+                if(!isEnabled) {
+                    Toast.makeText(getActivity(), "Please, stop timer to change the time.",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    minusTime();
+                }
             }
         });
 
