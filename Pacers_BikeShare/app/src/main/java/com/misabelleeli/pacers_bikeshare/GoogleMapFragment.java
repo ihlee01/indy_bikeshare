@@ -188,12 +188,13 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             super.onPostExecute(result);
             int imgName;
             for (int i = 0; i < numStations; i++) {
-
+                /*
                 if (bikesAv[i].equals("0")) {
                     imgName = R.drawable.ic_launcher_grey;
                 } else {
                     imgName = R.drawable.ic_launcher;
-                }
+                }*/
+                imgName = R.drawable.ic_launcher;
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(lat[i]), Double.parseDouble(lon[i])))
                         .title(stationName[i])
@@ -404,11 +405,14 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                 super.onPostExecute(result);
                 if(isUpdated) {
                     int imgName = 0;
+                    /*
                     if (bikes == 0) {
                         imgName = R.drawable.ic_launcher_grey;
                     } else {
                         imgName = R.drawable.ic_launcher;
                     }
+                    */
+                    imgName = R.drawable.ic_launcher;
                     marker.setPosition(new LatLng(myLat, myLong));
                     marker.setIcon(BitmapDescriptorFactory.fromResource(imgName));
                     marker.setSnippet(snippet);

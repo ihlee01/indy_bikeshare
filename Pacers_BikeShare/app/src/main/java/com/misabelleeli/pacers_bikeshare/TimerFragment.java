@@ -46,7 +46,7 @@ public class TimerFragment extends Fragment implements TimerCountDown{
     private int requestID = 001;
     private boolean vibrate = false;
 
-    private boolean isEnabled = false;
+    private boolean isEnabled = true;
 
     public TimerFragment() {
         // Required empty public constructor
