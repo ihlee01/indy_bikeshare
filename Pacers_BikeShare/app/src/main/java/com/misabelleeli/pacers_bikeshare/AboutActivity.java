@@ -8,13 +8,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.misabelleeli.pacers_bikeshare.R;
-
 public class AboutActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.Theme_Example);
         setContentView(R.layout.activity_about);
         TextView checkout_content = (TextView)findViewById(R.id.checkout_content);
         TextView checkout_content2 = (TextView)findViewById(R.id.checkout_content2);
