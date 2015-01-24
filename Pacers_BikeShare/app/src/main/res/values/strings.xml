@@ -72,7 +72,7 @@
     <string name="answer5">Please return a bike with a flat tire to the nearest Pacers Bikeshare station and report to Customer Service with the 4-digit number on the left side of the frame near the pedals. If it is not possible to get the bike to a station, you must properly secure the bike with the built-in lock and contact Customer Service at (317) 653-1947.</string>
     <string name="question6">What if I am involved in an accident?</string>
     <string name="answer6">If there has been an injury, please call 911 first. Contact Customer Service at (317) 653-1947 at the earliest appropriate time. If you are qualified to administer first aid and there is a need, please help out to the limit of your abilities. If appropriate, contact the police, as well. As in any accident, exchange information with any other affected party and collect contact information from witnesses.</string>
-    <string name="search_hint">Search by name...</string>
+    <string name="search_hint">Search</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="hello_world">Hello world!</string>
 

@@ -219,91 +219,39 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (!isOnline(getActivity())) {
-            buildAlertMessageNoInternet();
-        } else {
+        mMap = getMap();
 
-            mMap = getMap();
+        mMap.setMyLocationEnabled(true);
 
-            mMap.setMyLocationEnabled(true);
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-            locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        onLocationChanged(new Location("start"));
 
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                buildAlertMessageNoGps();
-            }
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    MIN_TIME, MIN_DISTANCE, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                MIN_TIME, MIN_DISTANCE, this);
 
-            mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
-            getData();
+        getData();
 
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    updateMarkerSnippet(marker);
-                    return false;
-                }
-            });
-            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                @Override
-                public void onInfoWindowClick(Marker marker) {
-                    //This will redirect it to GoogleMaps
-
-                    String url = "http://maps.google.com/maps?daddr=" + marker.getPosition().latitude + "," + marker.getPosition().longitude;
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
-                    intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                    startActivity(intent);
-                }
-            });
-        }
-    }
-
-    public static boolean isOnline(Context context) {
-
-        ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-            return true;
-        }
-        return false;
-
-    }
-
-    private void buildAlertMessageNoInternet() {
-        AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
-        b.setMessage("No network Connection.\nPlease Exit the application and connect " +
-                "to Wifi or Enable Network to continue. Then re-open the app.");
-        b.setTitle("Internet Connection");
-        b.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                updateMarkerSnippet(marker);
+                return false;
             }
         });
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                //This will redirect it to GoogleMaps
 
-        final AlertDialog alert = b.create();
-        alert.show();
-    }
-
-    private void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("GPS Location");
-        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
+                String url = "http://maps.google.com/maps?daddr=" + marker.getPosition().latitude + "," + marker.getPosition().longitude;
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                startActivity(intent);
+            }
+        });
     }
 
     private void updateMarkerSnippet(final Marker marker) {
@@ -426,9 +374,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     @Override
     public void onLocationChanged(Location location) {
-        myLat = location.getLatitude();
-        myLong = location.getLongitude();
-
         //Start from Indianapolis
         LatLng latLng = new LatLng(39.768403, -86.15806800000001);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);

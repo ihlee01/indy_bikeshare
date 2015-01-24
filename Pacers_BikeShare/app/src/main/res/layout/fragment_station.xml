@@ -35,7 +35,7 @@
                     android:layout_marginLeft="6dp"
                     android:layout_marginRight="6dp"
                     android:paddingLeft="34dp"
-                    android:hint="Search by Street..."
+                    android:hint="Search..."
                     android:id="@+id/search_view"
                     android:imeOptions="actionNext"
                     android:inputType="text"
