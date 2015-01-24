@@ -81,10 +81,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         private String[] lon = new String[numStations];
         private String[] stationName = new String[numStations];
         private String[] street = new String[numStations];
-        private String[] docks = new String[numStations];
         private String[] bikesAv = new String[numStations];
-        private float[] miles = new float[numStations];
-        private String[] streetNameOnly = new String[numStations];
 
         @Override
         protected void onProgressUpdate(String... values) {
@@ -151,9 +148,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         lon[i] = longitude;
                         street[i] = bikesAvail +","+docksAvail+","+streetName+"";
                         stationName[i] = title;
-                        docks[i] = docksAvail;
                         bikesAv[i] = bikesAvail;
-                        streetNameOnly[i] = streetName;
 
                         Location myLoc = new Location("a");
                         myLoc.setLatitude(myLat);
@@ -164,7 +159,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         stationLoc.setLongitude(Double.parseDouble(longitude));
 
                         String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc) * Float.parseFloat("0.000621371"));
-                        miles[i] = Float.parseFloat(tempMiles);
+
                         publishProgress(street[i]);
 
                         Station curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), Float.parseFloat(tempMiles), Double.parseDouble(latitude), Double.parseDouble(longitude));
@@ -255,8 +250,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     }
 
     private void updateMarkerSnippet(final Marker marker) {
-        final String markerTitle = marker.getTitle();
-
 
         AsyncTask<Void, Void, Void> update = new AsyncTask<Void, Void, Void>() {
             private String snippet = "";
@@ -352,6 +345,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             protected void onPostExecute(Void result) {
                 super.onPostExecute(result);
                 if(isUpdated) {
+
                     int imgName = 0;
                     /*
                     if (bikes == 0) {

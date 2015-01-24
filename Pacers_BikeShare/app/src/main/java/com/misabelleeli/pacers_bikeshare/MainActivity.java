@@ -30,6 +30,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.Theme_Example);
+
         setContentView(R.layout.activity_main);
 
         if (!isOnline(getApplicationContext())) {
