@@ -1,15 +1,11 @@
 package com.misabelleeli.pacers_bikeshare;
 
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -45,8 +41,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private GoogleMap mMap;
     private LocationManager locationManager;
-    private static final long MIN_TIME = 400;
-    private static final float MIN_DISTANCE = 1000;
+    private static final long MIN_TIME = 1000;
+    private static final float MIN_DISTANCE = 10;
 
     public static double myLat;
     public static double myLong;
@@ -63,10 +59,54 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private List<Station> stations = new ArrayList<Station>();
 
-    boolean isUpdated = false;
+    private boolean isUpdated = false;
 
     public GoogleMapFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        Minflater = inflater;
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mMap = getMap();
+
+        mMap.setMyLocationEnabled(true);
+
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                MIN_TIME, MIN_DISTANCE, this);
+
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+
+        getData();
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                updateMarkerSnippet(marker);
+                return false;
+            }
+        });
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                //This will redirect it to GoogleMaps
+                String url = "http://maps.google.com/maps?daddr=" + marker.getPosition().latitude + "," + marker.getPosition().longitude;
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                startActivity(intent);
+            }
+        });
     }
 
     public void getData() {
@@ -76,12 +116,12 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
     private class JSONParser extends AsyncTask<Void, String, Void> {
 
-        private int numStations = 25;
-        private String[] lat = new String[numStations];
-        private String[] lon = new String[numStations];
-        private String[] stationName = new String[numStations];
-        private String[] street = new String[numStations];
-        private String[] bikesAv = new String[numStations];
+        private int numStations;
+        private String[] lat;
+        private String[] lon;
+        private String[] stationName;
+        private String[] street;
+        private String[] bikesAv;
 
         @Override
         protected void onProgressUpdate(String... values) {
@@ -97,6 +137,12 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
             JSONArray bk = jp.getJSONFromUrl(url);
             if (bk != null) {
+                numStations = bk.length();
+                lat = new String[numStations];
+                lon = new String[numStations];
+                stationName = new String[numStations];
+                street = new String[numStations];
+                bikesAv = new String[numStations];
                 try {
                     stations = new ArrayList<Station>();
                     for (int i = 0; i < bk.length(); i++) {
@@ -150,19 +196,27 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                         stationName[i] = title;
                         bikesAv[i] = bikesAvail;
 
-                        Location myLoc = new Location("a");
-                        myLoc.setLatitude(myLat);
-                        myLoc.setLongitude(myLong);
-
-                        Location stationLoc = new Location("b");
-                        stationLoc.setLatitude(Double.parseDouble(latitude));
-                        stationLoc.setLongitude(Double.parseDouble(longitude));
-
-                        String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc) * Float.parseFloat("0.000621371"));
-
                         publishProgress(street[i]);
 
-                        Station curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), Float.parseFloat(tempMiles), Double.parseDouble(latitude), Double.parseDouble(longitude));
+                        Station curStation;
+                        //IF GPS is turned off, then current Location -> 0, 0
+                        if(myLat == 0 && myLong == 0) {
+                            //Assign a negative number as distance so that it can be recognized from the station Fragment
+                            curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), -1, Double.parseDouble(latitude), Double.parseDouble(longitude));
+
+                        }
+                        else {
+                            Location myLoc = new Location("a");
+                            myLoc.setLatitude(myLat);
+                            myLoc.setLongitude(myLong);
+
+                            Location stationLoc = new Location("b");
+                            stationLoc.setLatitude(Double.parseDouble(latitude));
+                            stationLoc.setLongitude(Double.parseDouble(longitude));
+
+                            String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc) * Float.parseFloat("0.000621371"));
+                            curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), Float.parseFloat(tempMiles), Double.parseDouble(latitude), Double.parseDouble(longitude));
+                        }
 
                         stations.add(curStation);
                     }
@@ -202,52 +256,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
     }
 
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        Minflater = inflater;
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mMap = getMap();
-
-        mMap.setMyLocationEnabled(true);
-
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        onLocationChanged(new Location("start"));
-
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                MIN_TIME, MIN_DISTANCE, this);
-
-        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
-
-        getData();
-
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                updateMarkerSnippet(marker);
-                return false;
-            }
-        });
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                //This will redirect it to GoogleMaps
-
-                String url = "http://maps.google.com/maps?daddr=" + marker.getPosition().latitude + "," + marker.getPosition().longitude;
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
-                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                startActivity(intent);
-            }
-        });
-    }
 
     private void updateMarkerSnippet(final Marker marker) {
 
@@ -256,6 +265,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
             //Previous # of bike
             private int bikes = Integer.parseInt(marker.getSnippet().split(",")[0]);
             private String original_street = marker.getSnippet().split(",")[2];
+            private double curLat;
+            private double curLong;
 
             //You get Data here
             @Override
@@ -319,8 +330,8 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
 
                                 JSONObject loc = bike.getJSONObject(TAG_LOC);
-                                myLat = loc.getDouble("Latitude");
-                                myLong = loc.getDouble("Longitude");
+                                curLat = loc.getDouble("Latitude");
+                                curLong = loc.getDouble("Longitude");
 
 
                                 bikes = Integer.parseInt(bikesAvail);
@@ -346,16 +357,13 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                 super.onPostExecute(result);
                 if(isUpdated) {
 
-                    int imgName = 0;
-                    /*
-                    if (bikes == 0) {
-                        imgName = R.drawable.ic_launcher_grey;
-                    } else {
-                        imgName = R.drawable.ic_launcher;
-                    }
-                    */
+                    int imgName = R.drawable.ic_launcher;
+
                     imgName = R.drawable.ic_launcher;
-                    marker.setPosition(new LatLng(myLat, myLong));
+                    LatLng latlng = new LatLng(curLat, curLong);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latlng, 14);
+                    mMap.animateCamera(cameraUpdate);
+                    marker.setPosition(latlng);
                     marker.setIcon(BitmapDescriptorFactory.fromResource(imgName));
                     marker.setSnippet(snippet);
                     marker.showInfoWindow();
@@ -363,11 +371,19 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
                 }
             }
         };
+        StationFragment.populateStations(stations);
         update.execute((Void[]) null);
     }
 
     @Override
     public void onLocationChanged(Location location) {
+        //Get user's current location
+        myLat = location.getLatitude();
+        myLong = location.getLongitude();
+        Log.d("On Location Change", myLat+", "+myLong);
+
+        getData();
+
         //Start from Indianapolis
         LatLng latLng = new LatLng(39.768403, -86.15806800000001);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
@@ -418,8 +434,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
 
 
             // Getting reference to the TextView to set longitude
-            //TextView description = (TextView) v.findViewById(R.id.snippet);
-
             station_name.setText(name);
             String[] result = desp.split(",");
             String bikes = result[0];

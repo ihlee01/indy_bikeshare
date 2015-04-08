@@ -1,24 +1,13 @@
 package com.misabelleeli.pacers_bikeshare;
 
-import android.util.Log;
-
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -47,14 +36,6 @@ public class JSONParser {
             HttpEntity httpEntity = null;
             HttpResponse httpResponse = null;
 
-            /*
-            params.add(new BasicNameValuePair("apikey",apiKey));
-            if(params != null)
-            {
-                String paramString = URLEncodedUtils.format(params,"utf-8");
-                url += "?" + paramString;
-            }
-            */
             HttpGet httpGet = new HttpGet(url);
             httpGet.addHeader("apiKey",apiKey);
             httpResponse = httpClient.execute(httpGet);

@@ -244,17 +244,28 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                             String docksAvail = bike.getString(TAG_Docks);
 
 
-                            Location myLoc = new Location("a");
-                            myLoc.setLatitude(GoogleMapFragment.myLat);
-                            myLoc.setLongitude(GoogleMapFragment.myLong);
 
-                            Location stationLoc = new Location("b");
-                            stationLoc.setLatitude(Double.parseDouble(latitude));
-                            stationLoc.setLongitude(Double.parseDouble(longitude));
 
-                            String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc) * Float.parseFloat("0.000621371"));
+                            Station curStation;
+                            //IF GPS is turned off, then the current Location -> 0, 0
+                            if(GoogleMapFragment.myLat == 0 && GoogleMapFragment.myLong == 0) {
+                                //Assign a negative number as distance so that it can be recognized from the station Fragment
+                                curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), -1, Double.parseDouble(latitude), Double.parseDouble(longitude));
 
-                            Station curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), Float.parseFloat(tempMiles), Double.parseDouble(latitude), Double.parseDouble(longitude));
+                            }
+                            else {
+                                Location myLoc = new Location("a");
+                                myLoc.setLatitude(GoogleMapFragment.myLat);
+                                myLoc.setLongitude(GoogleMapFragment.myLong);
+
+                                Location stationLoc = new Location("b");
+                                stationLoc.setLatitude(Double.parseDouble(latitude));
+                                stationLoc.setLongitude(Double.parseDouble(longitude));
+
+                                String tempMiles = String.format("%.1f", myLoc.distanceTo(stationLoc) * Float.parseFloat("0.000621371"));
+
+                                curStation = new Station(title, streetName, Integer.parseInt(bikesAvail), Integer.parseInt(docksAvail), Float.parseFloat(tempMiles), Double.parseDouble(latitude), Double.parseDouble(longitude));
+                            }
                             updatedStations.add(curStation);
                         }
 
@@ -466,8 +477,13 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
             bike_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, bike_ratio));
             dock_avail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, dock_ratio));
 
-
-            distance_view.setText(curStation.getDistance() + " mi");
+            if(curStation.getDistance() < 0) {
+                //GPS is turned off
+                distance_view.setText("");
+            }
+            else {
+                distance_view.setText(curStation.getDistance() + " mi");
+            }
 
             if (curStation.getFavorite()) {
                 favorite_button.setBackgroundResource(R.drawable.favorite);

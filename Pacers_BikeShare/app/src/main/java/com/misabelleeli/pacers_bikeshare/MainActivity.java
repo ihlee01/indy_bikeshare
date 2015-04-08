@@ -108,7 +108,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             exitApp();
         }
         else{
-            Toast.makeText(getBaseContext(), "Press again to exit", Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "Please Tab BACK button again to exit", Toast.LENGTH_LONG).show();
             back_pressed = System.currentTimeMillis();
         }
     }
