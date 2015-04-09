@@ -335,6 +335,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                 }
             }
         }
+        Collections.sort(stations);
         defaultBackgroundView.setVisibility(View.GONE);
         adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, stations);
         view.setAdapter(adapter);
@@ -371,6 +372,7 @@ public class StationFragment extends Fragment implements CompoundButton.OnChecke
                     }
                 }
             }
+            Collections.sort(stations);
             adapter = new MyListAdapter(getActivity().getBaseContext(), R.layout.station_view3, stations);
             swing = new SwingBottomInAnimationAdapter(adapter);
             swing.setAbsListView(myListView);

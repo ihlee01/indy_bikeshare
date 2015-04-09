@@ -1,11 +1,14 @@
 package com.misabelleeli.pacers_bikeshare;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 public class AboutActivity extends Activity {
@@ -15,6 +18,15 @@ public class AboutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setTheme(R.style.Theme_Example);
         setContentView(R.layout.activity_about);
+
+        if(Build.VERSION.SDK_INT > 20) {
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(this.getResources().getColor(R.color.darkOragne));
+        }
+
+
         TextView checkout_content = (TextView)findViewById(R.id.checkout_content);
         TextView checkout_content2 = (TextView)findViewById(R.id.checkout_content2);
         TextView checkout_content3 = (TextView)findViewById(R.id.checkout_content3);

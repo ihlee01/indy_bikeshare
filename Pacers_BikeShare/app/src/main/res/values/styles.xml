@@ -14,9 +14,9 @@
     </style>
 
     <style name="ActionBar.Solid.Example" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
-        <item name="android:background">@drawable/ab_solid_example_orange</item>
+        <item name="android:background">@color/orange</item>
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_example</item>
-        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_example_orange</item>
+        <item name="android:backgroundSplit">@color/darkOragne</item>
         <item name="android:titleTextStyle">@style/Theme.MyAppTheme.ActionBar.TitleTextStyle</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Example</item>
     </style>

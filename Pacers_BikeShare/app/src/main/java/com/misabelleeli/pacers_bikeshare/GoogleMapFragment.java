@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -82,6 +83,14 @@ public class GoogleMapFragment extends SupportMapFragment implements LocationLis
         mMap.setMyLocationEnabled(true);
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Toast.makeText(this.getActivity(), "GPS is currently OFF", Toast.LENGTH_LONG).show();
+            LatLng latLng = new LatLng(39.768403, -86.15806800000001);
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
+            mMap.animateCamera(cameraUpdate);
+        }
 
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                 MIN_TIME, MIN_DISTANCE, this);

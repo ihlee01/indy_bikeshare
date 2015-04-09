@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 21
+    buildToolsVersion "21.0.2"
 
     defaultConfig {
         applicationId "com.misabelleeli.pacers_bikeshare"
@@ -29,7 +29,7 @@ repositories {
     mavenCentral()
 }
 
-dependencies{
+dependencies {
     compile 'com.nhaarman.listviewanimations:library:2.6.0'
 }
 

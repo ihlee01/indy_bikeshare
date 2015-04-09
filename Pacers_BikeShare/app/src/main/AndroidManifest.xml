@@ -24,9 +24,13 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyC0wYFE7GMRl5AAHv0DzpH3Sc3rY5zMn14"/>
+"/>
             <!--
             Key for Debug
-                android:value="AIzaSyAL1izzp4C7twBYNNXa4xM36ByeO-K_OCQ" />
+                AIzaSyAL1izzp4C7twBYNNXa4xM36ByeO-K_OCQ
+
+            Key for Release
+                AIzaSyC0wYFE7GMRl5AAHv0DzpH3Sc3rY5zMn14
             -->
         <meta-data
             android:name="com.google.android.gms.version"
